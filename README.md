@@ -10,4 +10,6 @@ The terminal user interface inspired by K9s Style to connect to your AWS EC2 ins
 ## Installation
 - Via Go Install
 
-  ```go get github.com/carmeloriolo/ec2ti```
+  ```
+  go get github.com/carmeloriolo/ec2ti
+  ```
