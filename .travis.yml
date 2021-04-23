@@ -1,0 +1,10 @@
+sudo: required
+dist: bionic
+language: go
+
+go:
+- "1.15"
+
+script:
+  - go build
+  - go test -v ./...
