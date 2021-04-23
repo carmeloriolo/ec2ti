@@ -29,7 +29,7 @@ func (s *StsClientMock) GetCallerIdentity(ctx context.Context, params *sts.GetCa
 		if err != nil {
 			log.Fatal(err)
 		}
-		json.Unmarshal([]byte(string(stub)), &stsCallerIdentityOutput)
+		_ = json.Unmarshal([]byte(string(stub)), &stsCallerIdentityOutput)
 		return &stsCallerIdentityOutput, nil
 	default:
 		return nil, errors.New("error")
