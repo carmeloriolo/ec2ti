@@ -67,7 +67,7 @@ func (e *Ec2ClientMock) DescribeInstances(ctx context.Context, params *ec2.Descr
 		if err != nil {
 			log.Fatal(err)
 		}
-		json.Unmarshal([]byte(string(stub)), &ec2InstancesOutput)
+		_ = json.Unmarshal([]byte(string(stub)), &ec2InstancesOutput)
 		return &ec2InstancesOutput, nil
 	case runningStopped:
 		ec2InstancesOutput := ec2.DescribeInstancesOutput{}
@@ -75,7 +75,7 @@ func (e *Ec2ClientMock) DescribeInstances(ctx context.Context, params *ec2.Descr
 		if err != nil {
 			log.Fatal(err)
 		}
-		json.Unmarshal([]byte(string(stub)), &ec2InstancesOutput)
+		_ = json.Unmarshal([]byte(string(stub)), &ec2InstancesOutput)
 		return &ec2InstancesOutput, nil
 	case noInstances:
 		return &ec2.DescribeInstancesOutput{}, nil
