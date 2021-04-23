@@ -1,4 +1,4 @@
-[![License](https://www.repostatus.org/badges/latest/wip.svg)]
+![License](https://www.repostatus.org/badges/latest/wip.svg)
 ![master](https://github.com/carmeloriolo/ec2ti/actions/workflows/go.yml/badge.svg?branch=master)
 [![Build Status](https://travis-ci.com/carmeloriolo/ec2ti.svg?token=bawSUPPTpi76oR9sa9X6&branch=master)](https://travis-ci.com/carmeloriolo/ec2ti)
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)(https://github.com/carmeloriolo/ec2ti/blob/master/LICENSE)
