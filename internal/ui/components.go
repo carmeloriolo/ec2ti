@@ -71,16 +71,29 @@ func (t *InstanceTable) OnTableResize(numberOfRowsDisplaed int) {
 		if t.RowsDisplayed > oldRowsDisplayed { // If the rows are more than before
 			if t.Offset > 0 {
 				t.Cursor += t.Offset
-				if t.Cursor < 0 {
-					t.Cursor = 0
-				}
 				t.Offset -= (t.RowsDisplayed - oldRowsDisplayed)
-				if t.Offset < 0 {
-					t.Offset = 0
-				}
 			}
 		}
 
+		// Setting Lower bounds
+		if t.Cursor < 0 {
+			t.Cursor = 0
+		}
+		if t.Offset < 0 {
+			t.Offset = 0
+		}
+		// Setting Upper bounds
+		if t.Cursor > t.RowsDisplayed {
+			t.Cursor = t.RowsDisplayed - 1
+		}
+		if t.Offset > len(t.Instances)-1 {
+			t.Offset = len(t.Instances) - 1
+		}
+
+	} else {
+		// Reset table
+		t.Cursor = 0
+		t.Offset = 0
 	}
 }
 

@@ -61,9 +61,7 @@ func (u *Ui) Render() {
 	u.Table.OnTableResize(u.NumberOfRowsDisplayed())
 	s.Clear()
 	renderHeader(u)
-	if u.NumberOfRowsDisplayed() > 0 {
-		renderTable(u)
-	}
+	renderTable(u)
 	s.Show()
 }
 func (u *Ui) GetScreen() tcell.Screen {
