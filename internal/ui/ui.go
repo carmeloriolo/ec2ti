@@ -20,7 +20,7 @@ const (
 var (
 	oldSw           = 0
 	oldSh           = 0
-	componentsRatio = 3
+	componentsRatio = 4
 	defaultTitle    = "Title goes here"
 	styles          = map[string]tcell.Style{
 		"pending":       tcell.StyleDefault.Italic(false).Foreground(tcell.ColorGray),
@@ -47,30 +47,23 @@ type UiInterface interface {
 }
 
 type Ui struct {
-	Title          string
-	Header         HeaderInterface
-	Table          TableInterface
-	Handlers       HandlerMap
-	Screen         tcell.Screen
-	cursor         int
-	offset         int
-	tableStartingY int
+	Title    string
+	Header   HeaderInterface
+	Table    TableInterface
+	Handlers HandlerMap
+	Screen   tcell.Screen
+	yTable   int
 }
 
 func (u *Ui) Render() {
-	u.Screen.Sync()
 	s := u.Screen
-	sw, sh := u.Screen.Size()
-	if sh < oldSh {
-		u.cursor = 2
-		u.offset = 0
-	}
+	u.Screen.Sync()
+	u.Table.OnTableResize(u.NumberOfRowsDisplayed())
 	s.Clear()
-	oldSh = sh
-	oldSw = sw
-	u.tableStartingY = sh / componentsRatio
 	renderHeader(u)
-	renderTable(u)
+	if u.NumberOfRowsDisplayed() > 0 {
+		renderTable(u)
+	}
 	s.Show()
 }
 func (u *Ui) GetScreen() tcell.Screen {
@@ -79,55 +72,47 @@ func (u *Ui) GetScreen() tcell.Screen {
 
 func (u *Ui) SetTitle(s string) *Ui {
 	u = &Ui{
-		Title:          s,
-		Table:          u.Table,
-		Handlers:       u.Handlers,
-		Screen:         u.Screen,
-		cursor:         u.cursor,
-		offset:         u.offset,
-		tableStartingY: u.tableStartingY,
+		Title:    s,
+		Table:    u.Table,
+		Handlers: u.Handlers,
+		Screen:   u.Screen,
+		yTable:   u.yTable,
 	}
 	return u
 }
 
 func (u *Ui) SetHeader(h HeaderInterface) *Ui {
 	u = &Ui{
-		Title:          u.Title,
-		Header:         h,
-		Table:          u.Table,
-		Handlers:       u.Handlers,
-		Screen:         u.Screen,
-		cursor:         u.cursor,
-		offset:         u.offset,
-		tableStartingY: u.tableStartingY,
+		Title:    u.Title,
+		Header:   h,
+		Table:    u.Table,
+		Handlers: u.Handlers,
+		Screen:   u.Screen,
+		yTable:   u.yTable,
 	}
 	return u
 }
 
 func (u *Ui) SetTable(t TableInterface) *Ui {
 	u = &Ui{
-		Title:          u.Title,
-		Header:         u.Header,
-		Table:          t,
-		Handlers:       u.Handlers,
-		Screen:         u.Screen,
-		cursor:         u.cursor,
-		offset:         u.offset,
-		tableStartingY: u.tableStartingY,
+		Title:    u.Title,
+		Header:   u.Header,
+		Table:    t,
+		Handlers: u.Handlers,
+		Screen:   u.Screen,
+		yTable:   u.yTable,
 	}
 	return u
 }
 
 func (u *Ui) SetHandlers(h HandlerMap) *Ui {
 	u = &Ui{
-		Title:          u.Title,
-		Header:         u.Header,
-		Table:          u.Table,
-		Handlers:       h,
-		Screen:         u.Screen,
-		cursor:         u.cursor,
-		offset:         u.offset,
-		tableStartingY: u.tableStartingY,
+		Title:    u.Title,
+		Header:   u.Header,
+		Table:    u.Table,
+		Handlers: h,
+		Screen:   u.Screen,
+		yTable:   u.yTable,
 	}
 	return u
 
@@ -148,11 +133,9 @@ func NewUi() *Ui {
 			Foreground(tcell.ColorWhite))
 	_, sh := s.Size()
 	return &Ui{
-		Title:          defaultTitle,
-		Screen:         s,
-		cursor:         2,
-		offset:         0,
-		tableStartingY: sh / componentsRatio,
+		Title:  defaultTitle,
+		Screen: s,
+		yTable: sh / componentsRatio,
 	}
 }
 
@@ -171,11 +154,12 @@ func renderHeader(u *Ui) {
 	for i, r := range u.Header.Rows() {
 		DrawStr(screen, 1, 2+i, styles[HeaderRow], r)
 	}
-	DrawLine(screen, 0, 0, sw)
+	DrawBox(screen, 0, 0, sw-1, u.yTable-1)
 	DrawStr(screen, sw/2-len(title)/2-1, 0, styles[HeaderRow], title)
 }
 
 func renderTable(u *Ui) {
+	table := u.Table.(*InstanceTable)
 	columns := u.Table.Columns()
 	screen := u.Screen
 	sw, sh := screen.Size()
@@ -183,27 +167,27 @@ func renderTable(u *Ui) {
 	delta := sw / n
 	w := 1
 	// Render box around table
-	tableTitle := emoji.Sprintf(" :computer: EC2 Instances (%d) ", len(u.Table.Rows())+u.offset)
-	DrawBox(screen, 0, u.tableStartingY-1, sw-1, sh-1)
-	DrawStr(screen, sw/2-len(tableTitle)/2-1, u.tableStartingY-1, tcell.StyleDefault, tableTitle)
+	tableTitle := emoji.Sprintf(" :computer: EC2 Instances (%d) ", len(table.Instances))
+	DrawBox(screen, 0, u.yTable-1, sw-1, sh-1)
+	DrawStr(screen, sw/2-len(tableTitle)/2-1, u.yTable-1, tcell.StyleDefault, tableTitle)
 	for _, v := range columns {
-		DrawStr(screen, w, u.tableStartingY+1, styles[TopRow], v)
+		DrawStr(screen, w, u.yTable+1, styles[TopRow], v)
 		w += delta
 	}
-	for i, v := range u.Table.(*InstanceTable).Instances {
+	for i, v := range table.Instances[table.Offset:len(table.Instances)] {
 		targetStyle := styles[v.State]
 		w = 1
-		if i+2+u.tableStartingY > sh-3 {
+		if i+2+u.yTable > sh-3 {
 			return
 		}
-		if i+2 == u.cursor {
+		if i == table.Cursor {
 			targetStyle = styles[SelectedRow]
 		}
 		for _, str := range strings.Split(v.String(), " ") {
-			DrawStr(screen, w, u.tableStartingY+i+2, targetStyle, str)
+			DrawStr(screen, w, u.yTable+i+2, targetStyle, str)
 			// Fill gaps drawing blank chars
 			for j := (w + len(str)); j < (w + delta); j++ {
-				DrawStr(screen, j, u.tableStartingY+i+2, targetStyle, " ")
+				DrawStr(screen, j, u.yTable+i+2, targetStyle, " ")
 			}
 			w += delta
 		}
@@ -212,4 +196,13 @@ func renderTable(u *Ui) {
 
 func formatTitle(t string) string {
 	return emoji.Sprintf(" :rocket: %s :beer:", t)
+}
+
+func (u *Ui) NumberOfRowsDisplayed() int {
+	_, sh := u.Screen.Size()
+	return sh - u.yTable - 4
+}
+
+func handleTableResize(table InstanceTable) {
+
 }
