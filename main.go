@@ -34,6 +34,7 @@ func main() {
 		Usage: appDescription,
 		Flags: appFlags,
 		Action: func(c *cli.Context) error {
+
 			cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(c.String(awsRegion)))
 			if err != nil {
 				log.Fatal(err)
@@ -52,7 +53,7 @@ func main() {
 				switch ev := u.Screen.PollEvent().(type) {
 				case *tcell.EventResize:
 					u.ResetPosition()
-					ui.Render(u)
+					u.Render()
 				case *tcell.EventKey:
 					if f, present := u.Handlers[ev.Key()]; present {
 						f(u)

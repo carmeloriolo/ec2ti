@@ -35,9 +35,9 @@ func HandleNavigateUp(u *Ui) {
 		}
 	}
 	it := u.Table.(*InstanceTable)
-	Render(u.SetTable(&InstanceTable{
+	u.SetTable(&InstanceTable{
 		Instances: it.Instances[u.offset:len(it.Instances)],
-	}))
+	}).Render()
 }
 
 func HandleNavigateDown(u *Ui) {
@@ -52,8 +52,8 @@ func HandleNavigateDown(u *Ui) {
 				u.offset++
 			}
 		}
-		Render(u.SetTable(&InstanceTable{
+		u.SetTable(&InstanceTable{
 			Instances: it.Instances[u.offset:len(it.Instances)],
-		}))
+		}).Render()
 	}
 }
