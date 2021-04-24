@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	Header      = "Header"
+	TopRow      = "TopRow"
 	Row         = "Row"
 	SelectedRow = "SelectedRow"
 	StoppedRow  = "StoppedRow"
@@ -24,7 +24,7 @@ var (
 		"stopped":       tcell.StyleDefault.Italic(false).Foreground(tcell.ColorDarkGray),
 		"shutting-down": tcell.StyleDefault.Italic(false).Foreground(tcell.ColorRed),
 		"terminated":    tcell.StyleDefault.Italic(false).Foreground(tcell.ColorDarkRed),
-		Header:          tcell.StyleDefault.Bold(true),
+		TopRow:          tcell.StyleDefault.Bold(true),
 		SelectedRow:     tcell.StyleDefault.Bold(true).Foreground(tcell.ColorBlack.TrueColor()).Background(tcell.ColorDarkGray),
 	}
 	DefaultHandlers = HandlerMap{
@@ -141,7 +141,7 @@ func renderTable(u *Ui) {
 	delta := sw / n
 	w := 1
 	for _, v := range headers {
-		DrawStr(screen, w, 1, styles[Header], v)
+		DrawStr(screen, w, 1, styles[TopRow], v)
 		w += delta
 	}
 	for i, v := range u.Table.(*InstanceTable).Instances {

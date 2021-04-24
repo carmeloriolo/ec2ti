@@ -7,6 +7,10 @@ import (
 	"github.com/carmeloriolo/ec2ti/internal/client"
 )
 
+type Header interface {
+	Rows() []string
+}
+
 type Table interface {
 	Columns() []string
 	Rows() []string
