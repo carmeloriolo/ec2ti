@@ -134,7 +134,7 @@ func renderTitleBox(u *Ui) {
 }
 
 func renderTable(u *Ui) {
-	headers := u.Table.Headers()
+	headers := u.Table.Columns()
 	screen := u.Screen
 	sw, sh := screen.Size()
 	n := len(headers)

@@ -8,7 +8,7 @@ import (
 )
 
 type Table interface {
-	Headers() []string
+	Columns() []string
 	Rows() []string
 }
 
@@ -16,7 +16,7 @@ type InstanceTable struct {
 	Instances []client.Instance
 }
 
-func (t *InstanceTable) Headers() []string {
+func (t *InstanceTable) Columns() []string {
 	headers := []string{}
 	v := reflect.ValueOf(client.Instance{})
 	for i := 0; i < v.NumField(); i++ {
