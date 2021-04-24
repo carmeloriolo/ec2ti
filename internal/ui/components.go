@@ -1,17 +1,18 @@
 package ui
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 
 	"github.com/carmeloriolo/ec2ti/internal/client"
 )
 
-type Header interface {
+type HeaderInterface interface {
 	Rows() []string
 }
 
-type Table interface {
+type TableInterface interface {
 	Columns() []string
 	Rows() []string
 }
@@ -21,12 +22,12 @@ type InstanceTable struct {
 }
 
 func (t *InstanceTable) Columns() []string {
-	headers := []string{}
+	columns := []string{}
 	v := reflect.ValueOf(client.Instance{})
 	for i := 0; i < v.NumField(); i++ {
-		headers = append(headers, strings.ToUpper(v.Type().Field(i).Name))
+		columns = append(columns, strings.ToUpper(v.Type().Field(i).Name))
 	}
-	return headers
+	return columns
 }
 
 func (t *InstanceTable) Rows() []string {
@@ -35,4 +36,18 @@ func (t *InstanceTable) Rows() []string {
 		rows = append(rows, v.String())
 	}
 	return rows
+}
+
+type InfoHeader struct {
+	UserIdentity client.CallerIdentity
+	Region       string
+}
+
+func (u *InfoHeader) Rows() []string {
+	return []string{
+		fmt.Sprintf("UserId:\t%s", u.UserIdentity.UserId),
+		fmt.Sprintf("Account:\t%s", u.UserIdentity.Account),
+		fmt.Sprintf("Arn:\t\t%s", u.UserIdentity.Arn),
+		fmt.Sprintf("Region:\t%s", u.Region),
+	}
 }

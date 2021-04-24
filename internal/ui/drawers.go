@@ -21,19 +21,26 @@ func DrawStr(s tcell.Screen, x, y int, style tcell.Style, str string) {
 
 func DrawBox(s tcell.Screen, x, y, w, h int) {
 	for i := x; i < w; i++ {
-		s.SetContent(i, 0, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
+		s.SetContent(i, y, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
 		s.SetContent(i, h-1, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
 	}
+	// Disabled vertical lines in box
 	for i := y; i < h; i++ {
-		if i == 0 {
-			s.SetContent(0, i, tcell.RuneULCorner, []rune{}, tcell.StyleDefault)
+		if i == y {
+			s.SetContent(x, i, tcell.RuneULCorner, []rune{}, tcell.StyleDefault)
 			s.SetContent(w, i, tcell.RuneURCorner, []rune{}, tcell.StyleDefault)
 		} else if i == h-1 {
-			s.SetContent(0, i, tcell.RuneLLCorner, []rune{}, tcell.StyleDefault)
+			s.SetContent(x, i, tcell.RuneLLCorner, []rune{}, tcell.StyleDefault)
 			s.SetContent(w, i, tcell.RuneLRCorner, []rune{}, tcell.StyleDefault)
 		} else {
-			s.SetContent(0, i, tcell.RuneVLine, []rune{}, tcell.StyleDefault)
+			s.SetContent(x, i, tcell.RuneVLine, []rune{}, tcell.StyleDefault)
 			s.SetContent(w, i, tcell.RuneVLine, []rune{}, tcell.StyleDefault)
 		}
+	}
+}
+
+func DrawLine(s tcell.Screen, x, y, l int) {
+	for i := x; i < l; i++ {
+		s.SetContent(i, y, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
 	}
 }

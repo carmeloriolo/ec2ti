@@ -8,9 +8,9 @@ import (
 )
 
 type CallerIdentity struct {
-	userId  string
-	account string
-	arn     string
+	UserId  string
+	Account string
+	Arn     string
 }
 
 type StsClientInterface interface {
@@ -34,8 +34,8 @@ func (s *StsClient) GetCallerIdentity() (*CallerIdentity, error) {
 		return nil, err
 	}
 	return &CallerIdentity{
-		userId:  *identity.UserId,
-		account: *identity.Account,
-		arn:     *identity.Arn,
+		UserId:  *identity.UserId,
+		Account: *identity.Account,
+		Arn:     *identity.Arn,
 	}, nil
 }

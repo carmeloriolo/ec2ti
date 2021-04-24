@@ -45,7 +45,7 @@ func HandleNavigateDown(u *Ui) {
 	_, sh := u.Screen.Size()
 	// Minus 3 because I have to consider top/bottom line + header line
 	if u.cursor <= len(it.Instances) {
-		if u.cursor < sh-3 {
+		if u.cursor+u.tableStartingY < sh-3 {
 			u.cursor++
 		} else {
 			if u.cursor+u.offset <= len(it.Instances) {

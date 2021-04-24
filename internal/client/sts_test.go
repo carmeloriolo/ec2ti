@@ -60,9 +60,9 @@ func Test_GetCallerIdentity(t *testing.T) {
 			name: "Testing get caller identity",
 			sts:  getStsMock(callerIdentity),
 			wantIdentity: &CallerIdentity{
-				userId:  "AKIDSJHUFAHUDASMK",
-				account: "48120983120391",
-				arn:     "arn:aws:iam::48120983120391:user/user.mock",
+				UserId:  "AKIDSJHUFAHUDASMK",
+				Account: "48120983120391",
+				Arn:     "arn:aws:iam::48120983120391:user/user.mock",
 			},
 			wantError: nil,
 		},

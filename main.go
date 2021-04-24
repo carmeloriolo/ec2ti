@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
@@ -43,16 +42,21 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+			userIdentity, err := client.NewSts(cfg).GetCallerIdentity()
+			if err != nil {
+				log.Fatal(err)
+			}
 
-			title := fmt.Sprintf(" EC2 Instances (%d) ", len(instances))
-			u := ui.NewUi().SetTitle(title).SetTable(&ui.InstanceTable{
+			u := ui.NewUi().SetTitle(appName).SetHeader(&ui.InfoHeader{
+				UserIdentity: *userIdentity,
+				Region:       c.String(awsRegion),
+			}).SetTable(&ui.InstanceTable{
 				Instances: instances,
 			}).SetHandlers(ui.DefaultHandlers)
 
 			for {
 				switch ev := u.Screen.PollEvent().(type) {
 				case *tcell.EventResize:
-					u.ResetPosition()
 					u.Render()
 				case *tcell.EventKey:
 					if f, present := u.Handlers[ev.Key()]; present {
