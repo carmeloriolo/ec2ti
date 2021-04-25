@@ -46,13 +46,30 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+			// instances := []client.Instance{}
+			// for i := 0; i < 64; i++ {
+			//   instances = append(instances, client.Instance{
+			//     Id:           fmt.Sprintf("id-%d", i),
+			//     Name:         "ec2mock",
+			//     State:        "running",
+			//     InstanceType: "t2.micro",
+			//     Ip:           "192.168.1.1",
+			//     LaunchTime:   "jdaisodjaso",
+			//   })
+			// }
+			// userIdentity := &client.CallerIdentity{
+			//   UserId:  "carmelo",
+			//   Account: "account",
+			//   Arn:     "adshuèdhaudhasuarn",
+			// }
 
-			u := ui.NewUi().SetTitle(appName).SetHeader(&ui.InfoHeader{
+			u := ui.NewUi()
+			rows := u.NumberOfRowsDisplayed()
+			u.SetTitle(appName).SetHeader(&ui.InfoHeader{
 				UserIdentity: *userIdentity,
 				Region:       c.String(awsRegion),
-			}).SetTable(&ui.InstanceTable{
-				Instances: instances,
-			}).SetHandlers(ui.DefaultHandlers)
+				// Region: "eu-west-1",
+			}).SetTable(ui.NewInstanceTable(instances, rows)).SetHandlers(ui.DefaultHandlers)
 
 			for {
 				switch ev := u.Screen.PollEvent().(type) {
