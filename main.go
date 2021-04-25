@@ -63,13 +63,12 @@ func main() {
 			//   Arn:     "adshuèdhaudhasuarn",
 			// }
 
-			u := ui.NewUi()
-			rows := u.NumberOfRowsDisplayed()
-			u.SetTitle(appName).SetHeader(&ui.InfoHeader{
+			u := ui.NewUi().SetTitle(appName).SetHeader(&ui.InfoHeader{
 				UserIdentity: *userIdentity,
 				Region:       c.String(awsRegion),
 				// Region: "eu-west-1",
-			}).SetTable(ui.NewInstanceTable(instances, rows)).SetHandlers(ui.DefaultHandlers)
+			})
+			u = u.SetTable(ui.NewInstanceTable(instances, u.NumberOfRowsDisplayed())).SetHandlers(ui.DefaultHandlers)
 
 			for {
 				switch ev := u.Screen.PollEvent().(type) {
