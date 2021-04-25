@@ -1,7 +1,6 @@
 package ui
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -151,14 +150,12 @@ func renderTitleBox(u *Ui) {
 func renderHeader(u *Ui) {
 	screen := u.Screen
 	sw, _ := screen.Size()
-	// title := formatTitle(u.Title)
+	title := formatTitle(u.Title)
 	for i, r := range u.Header.Rows() {
 		DrawStr(screen, 1, 2+i, styles[HeaderRow], r)
 	}
 	DrawLine(screen, 0, 0, sw)
-	it := u.Table.(*InstanceTable)
-	s := fmt.Sprintf("t.Cursor: %d t.Offset: %d", it.Cursor, it.Offset)
-	DrawStr(screen, sw/2-len(s)/2-1, 0, styles[HeaderRow], s)
+	DrawStr(screen, sw/2-len(title)/2-1, 0, styles[HeaderRow], title)
 }
 
 func renderTable(u *Ui) {
@@ -169,7 +166,6 @@ func renderTable(u *Ui) {
 	n := len(columns)
 	delta := sw / n
 	w := 1
-	// Render box around table
 	tableTitle := emoji.Sprintf(" :computer: EC2 Instances (%d) ", len(table.Instances))
 	DrawLine(screen, 0, u.yTable-1, sw)
 	DrawStr(screen, sw/2-len(tableTitle)/2-1, u.yTable-1, tcell.StyleDefault, tableTitle)
