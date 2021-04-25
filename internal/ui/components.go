@@ -44,7 +44,6 @@ func (t *InstanceTable) Rows() []string {
 
 func (t *InstanceTable) OnTableResize(nNew int) {
 
-	// Case1 . NRowsnew > NRowsold
 	nOld := t.RowsDisplayed
 	t.RowsDisplayed = nNew
 
@@ -67,11 +66,16 @@ func (t *InstanceTable) OnTableResize(nNew int) {
 				t.Offset += (t.Cursor + 1 - nNew)
 				t.Cursor = nNew - 1
 			}
-		} else if t.Offset > 0 {
-			t.Offset += (nOld - nNew)
-			t.Cursor -= (nOld - nNew)
-			if t.Cursor < 0 {
-				t.Cursor = 0
+			return
+		}
+		if t.Offset > 0 {
+			if t.Cursor > 0 {
+				cursorOld := t.Cursor
+				t.Cursor -= (nOld - nNew)
+				if t.Cursor < 0 {
+					t.Cursor = 0
+				}
+				t.Offset += cursorOld - t.Cursor
 			}
 		}
 	}
