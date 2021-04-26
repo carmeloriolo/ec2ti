@@ -6,5 +6,5 @@ go:
 - "1.15"
 
 script:
-  - go build
+  - go build ./cmd/main.go
   - go test -v ./...
