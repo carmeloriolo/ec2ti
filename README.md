@@ -13,5 +13,5 @@ The terminal user interface inspired by K9s Style to connect to your AWS EC2 ins
   ```
   go get github.com/carmeloriolo/ec2ti
   ```
-## Screenshots
+## Screenshot
 <img src="docs/screenshots/ec2ti.png"/>
