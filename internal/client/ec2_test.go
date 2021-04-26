@@ -131,7 +131,7 @@ func Test_GetInstancesByState(t *testing.T) {
 	for _, tt := range tests {
 		st := tt
 		t.Run(tt.name, func(t *testing.T) {
-			instances, err := st.ec2.GetInstancesByState(allStates)
+			instances, err := st.ec2.GetInstancesByState(AllStates)
 			if (st.wantErr == nil && err != nil) || (st.wantErr != nil && err == nil) {
 				t.Errorf("GetInstancesByState(%s) st.wantErr = %s err = %s", st.states, st.wantErr, err)
 				return

@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	allStates = []string{
+	AllStates = []string{
 		"pending",
 		"running",
 		"stopping",
@@ -64,7 +64,7 @@ func NewEc2Client(cfg aws.Config) *Ec2Client {
 }
 
 func (e *Ec2Client) GetInstances() ([]Instance, error) {
-	return e.GetInstancesByState(allStates)
+	return e.GetInstancesByState(AllStates)
 }
 
 func (e *Ec2Client) GetInstancesByState(states []string) ([]Instance, error) {
