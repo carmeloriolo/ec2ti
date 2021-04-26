@@ -5,35 +5,63 @@ import (
 	"github.com/mattn/go-runewidth"
 )
 
-func (u *Ui) DrawStr(x, y int, style tcell.Style, str string) {
+func DrawStr(s tcell.Screen, x, y int, style tcell.Style, str string) {
+	sw, _ := s.Size()
 	for _, c := range str {
+		if x == sw-1 {
+			return
+		}
 		var comb []rune
 		w := runewidth.RuneWidth(c)
 		if w == 0 {
-			comb = []rune{c}
-			c = ' '
+			// comb = []rune{c}
+			// c = ' '
 			w = 1
 		}
-		u.Screen.SetContent(x, y, c, comb, style)
+		s.SetContent(x, y, c, comb, style)
 		x += w
 	}
 }
 
-func (u *Ui) DrawBox(x, y, w, h int) {
+func DrawHeaderBox(s tcell.Screen, x, y, w, h int) {
 	for i := x; i < w; i++ {
-		u.Screen.SetContent(i, 0, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
-		u.Screen.SetContent(i, h-1, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
+		s.SetContent(i, y, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
 	}
 	for i := y; i < h; i++ {
-		if i == 0 {
-			u.Screen.SetContent(0, i, tcell.RuneULCorner, []rune{}, tcell.StyleDefault)
-			u.Screen.SetContent(w, i, tcell.RuneURCorner, []rune{}, tcell.StyleDefault)
-		} else if i == h-1 {
-			u.Screen.SetContent(0, i, tcell.RuneLLCorner, []rune{}, tcell.StyleDefault)
-			u.Screen.SetContent(w, i, tcell.RuneLRCorner, []rune{}, tcell.StyleDefault)
+		if i == y {
+			s.SetContent(x, i, tcell.RuneULCorner, []rune{}, tcell.StyleDefault)
+			s.SetContent(w, i, tcell.RuneURCorner, []rune{}, tcell.StyleDefault)
+		} else if i == h {
+			s.SetContent(x, i, tcell.RuneLLCorner, []rune{}, tcell.StyleDefault)
+			s.SetContent(w, i, tcell.RuneLRCorner, []rune{}, tcell.StyleDefault)
 		} else {
-			u.Screen.SetContent(0, i, tcell.RuneVLine, []rune{}, tcell.StyleDefault)
-			u.Screen.SetContent(w, i, tcell.RuneVLine, []rune{}, tcell.StyleDefault)
+			s.SetContent(x, i, tcell.RuneVLine, []rune{}, tcell.StyleDefault)
+			s.SetContent(w, i, tcell.RuneVLine, []rune{}, tcell.StyleDefault)
 		}
+	}
+}
+
+func DrawTableBox(s tcell.Screen, x, y, w, h int) {
+	for i := x; i < w; i++ {
+		s.SetContent(i, y, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
+		s.SetContent(i, h-1, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
+	}
+	for i := y; i < h; i++ {
+		if i == y {
+			s.SetContent(x, i, tcell.RuneULCorner, []rune{}, tcell.StyleDefault)
+			s.SetContent(w, i, tcell.RuneURCorner, []rune{}, tcell.StyleDefault)
+		} else if i == h-1 {
+			s.SetContent(x, i, tcell.RuneLLCorner, []rune{}, tcell.StyleDefault)
+			s.SetContent(w, i, tcell.RuneLRCorner, []rune{}, tcell.StyleDefault)
+		} else {
+			s.SetContent(x, i, tcell.RuneVLine, []rune{}, tcell.StyleDefault)
+			s.SetContent(w, i, tcell.RuneVLine, []rune{}, tcell.StyleDefault)
+		}
+	}
+}
+
+func DrawLine(s tcell.Screen, x, y, l int) {
+	for i := x; i < l; i++ {
+		s.SetContent(i, y, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
 	}
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
@@ -34,6 +33,7 @@ func main() {
 		Usage: appDescription,
 		Flags: appFlags,
 		Action: func(c *cli.Context) error {
+
 			cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(c.String(awsRegion)))
 			if err != nil {
 				log.Fatal(err)
@@ -42,17 +42,38 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+			userIdentity, err := client.NewSts(cfg).GetCallerIdentity()
+			if err != nil {
+				log.Fatal(err)
+			}
+			// instances := []client.Instance{}
+			// for i := 0; i < 64; i++ {
+			//   instances = append(instances, client.Instance{
+			//     Id:           fmt.Sprintf("id-%d", i),
+			//     Name:         "ec2mock",
+			//     State:        "running",
+			//     InstanceType: "t2.micro",
+			//     Ip:           "192.168.1.1",
+			//     LaunchTime:   "jdaisodjaso",
+			//   })
+			// }
+			// userIdentity := &client.CallerIdentity{
+			//   UserId:  "carmelo",
+			//   Account: "account",
+			//   Arn:     "adshuèdhaudhasuarn",
+			// }
 
-			title := fmt.Sprintf(" EC2 Instances (%d) ", len(instances))
-			u := ui.NewUi().SetTitle(title).SetTable(&ui.InstanceTable{
-				Instances: instances,
-			}).SetHandlers(ui.DefaultHandlers)
+			u := ui.NewUi().SetTitle(appName).SetHeader(&ui.InfoHeader{
+				UserIdentity: *userIdentity,
+				Region:       c.String(awsRegion),
+				// Region: "eu-west-1",
+			})
+			u = u.SetTable(ui.NewInstanceTable(instances, u.NumberOfRowsDisplayed())).SetHandlers(ui.DefaultHandlers)
 
 			for {
 				switch ev := u.Screen.PollEvent().(type) {
 				case *tcell.EventResize:
-					u.ResetPosition()
-					ui.Render(u)
+					u.Render()
 				case *tcell.EventKey:
 					if f, present := u.Handlers[ev.Key()]; present {
 						f(u)

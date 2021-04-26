@@ -18,42 +18,33 @@ func HandleCtrlC(u *Ui) {
 }
 
 func HandleEnter(u *Ui) {
-	index := u.cursor - 2 + u.offset
+	table := u.Table.(*InstanceTable)
 	u.Screen.Clear()
 	u.Screen.Fini()
 	it := u.Table.(*InstanceTable)
-	fmt.Printf("Selected: %s\n", it.Instances[index])
+	fmt.Printf("Selected: %s\n", it.Instances[table.Cursor+table.Offset])
 	os.Exit(0)
 }
 
 func HandleNavigateUp(u *Ui) {
-	if u.cursor > 2 {
-		u.cursor--
-	} else {
-		if u.offset > 0 {
-			u.offset--
-		}
+	table := u.Table.(*InstanceTable)
+	if table.Cursor > 0 {
+		table.Cursor--
+	} else if table.Offset > 0 {
+		table.Offset--
 	}
-	it := u.Table.(*InstanceTable)
-	Render(u.SetTable(&InstanceTable{
-		Instances: it.Instances[u.offset:len(it.Instances)],
-	}))
+	u.Render()
 }
 
 func HandleNavigateDown(u *Ui) {
-	it := u.Table.(*InstanceTable)
-	_, sh := u.Screen.Size()
-	// Minus 3 because I have to consider top/bottom line + header line
-	if u.cursor <= len(it.Instances) {
-		if u.cursor < sh-3 {
-			u.cursor++
-		} else {
-			if u.cursor+u.offset <= len(it.Instances) {
-				u.offset++
-			}
+	table := u.Table.(*InstanceTable)
+	n := table.RowsDisplayed
+	if table.Cursor < n-1 {
+		table.Cursor++
+	} else {
+		if table.Cursor+table.Offset < len(table.Instances)-1 {
+			table.Offset++
 		}
-		Render(u.SetTable(&InstanceTable{
-			Instances: it.Instances[u.offset:len(it.Instances)],
-		}))
 	}
+	u.Render()
 }
