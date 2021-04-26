@@ -2,3 +2,4 @@ bin/
 vendor/
 ec2ti
 **.sw*
+.DS_Store
