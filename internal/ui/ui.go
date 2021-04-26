@@ -189,7 +189,7 @@ func renderTable(u *Ui) {
 		}
 		delta = sw / n
 	}
-	w := 1
+	w := 2
 	tableTitle := emoji.Sprintf(" :computer: EC2 Instances (%d) ", len(table.Instances))
 	DrawTableBox(screen, 0, u.yTable-1, sw-1, sh-1)
 	DrawStr(screen, sw/2-len(tableTitle)/2-1, u.yTable-1, tcell.StyleDefault, tableTitle)
@@ -199,7 +199,7 @@ func renderTable(u *Ui) {
 		w += delta
 	}
 	for i, v := range table.Instances[table.Offset:len(table.Instances)] {
-		w = 1
+		w = 2
 		if i+2+u.yTable > sh-3 {
 			return
 		}
