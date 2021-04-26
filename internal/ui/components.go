@@ -82,6 +82,15 @@ func (t *InstanceTable) OnTableResize(nNew int) {
 
 }
 
+func NewInstanceTable(instances []client.Instance, n int) *InstanceTable {
+	return &InstanceTable{
+		Instances:     instances,
+		Cursor:        0,
+		Offset:        0,
+		RowsDisplayed: n,
+	}
+}
+
 type InfoHeader struct {
 	UserIdentity client.CallerIdentity
 	Region       string
@@ -93,16 +102,6 @@ func (u *InfoHeader) Rows() []string {
 		fmt.Sprintf("Account:\t%s", u.UserIdentity.Account),
 		fmt.Sprintf("Arn:\t\t%s", u.UserIdentity.Arn),
 		fmt.Sprintf("Region:\t%s", u.Region),
-	}
-}
-
-func NewInstanceTable(instances []client.Instance, n int) *InstanceTable {
-
-	return &InstanceTable{
-		Instances:     instances,
-		Cursor:        0,
-		Offset:        0,
-		RowsDisplayed: n,
 	}
 
 }

@@ -46,6 +46,5 @@ func HandleNavigateDown(u *Ui) {
 			table.Offset++
 		}
 	}
-	// calculate new sliding window
 	u.Render()
 }

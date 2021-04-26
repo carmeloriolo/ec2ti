@@ -10,16 +10,20 @@ import (
 )
 
 const (
-	HeaderRow   = "HeaderRow"
-	TopRow      = "TopRow"
-	Row         = "Row"
-	SelectedRow = "SelectedRow"
-	StoppedRow  = "StoppedRow"
+	HeaderRow     = "HeaderRow"
+	TopRow        = "TopRow"
+	Row           = "Row"
+	SelectedRow   = "SelectedRow"
+	StoppedRow    = "StoppedRow"
+	CommandRow    = "Command"
+	ctrlCLabel    = "<Ctrl+C> EXIT"
+	describeLabel = "<d> DESCRIBE"
+	refreshLabel  = "<r> REFRESH"
+	searchLabel   = "</> SEARCH"
+	helpLabel     = "<?> HELP"
 )
 
 var (
-	oldSw           = 0
-	oldSh           = 0
 	componentsRatio = 4
 	defaultTitle    = "Title goes here"
 	styles          = map[string]tcell.Style{
@@ -30,6 +34,7 @@ var (
 		"shutting-down": tcell.StyleDefault.Italic(false).Foreground(tcell.ColorRed),
 		"terminated":    tcell.StyleDefault.Italic(false).Foreground(tcell.ColorDarkRed),
 		HeaderRow:       tcell.StyleDefault.Bold(true).Foreground(tcell.ColorWhite),
+		CommandRow:      tcell.StyleDefault.Bold(false).Foreground(tcell.ColorBlue),
 		TopRow:          tcell.StyleDefault.Bold(true),
 		SelectedRow:     tcell.StyleDefault.Bold(true).Foreground(tcell.ColorBlack.TrueColor()).Background(tcell.ColorDarkGray),
 	}
@@ -38,6 +43,13 @@ var (
 		tcell.KeyEnter: HandleEnter,
 		tcell.KeyUp:    HandleNavigateUp,
 		tcell.KeyDown:  HandleNavigateDown,
+	}
+	commandLabels = []string{
+		helpLabel,
+		refreshLabel,
+		searchLabel,
+		describeLabel,
+		ctrlCLabel,
 	}
 )
 
@@ -57,14 +69,13 @@ type Ui struct {
 
 func (u *Ui) Render() {
 	s := u.Screen
-	u.Screen.Sync()
-	s.Clear()
 	_, sh := u.Screen.Size()
 	u.yTable = sh / componentsRatio
 	u.Table.OnTableResize(u.NumberOfRowsDisplayed())
-	renderHeader(u)
+	s.Clear()
 	renderTable(u)
-	s.Show()
+	renderHeader(u)
+	s.Sync()
 }
 func (u *Ui) GetScreen() tcell.Screen {
 	return u.Screen
@@ -139,23 +150,29 @@ func NewUi() *Ui {
 	}
 }
 
-func renderTitleBox(u *Ui) {
-	t := u.Title
-	s := u.Screen
-	sw, sh := s.Size()
-	DrawBox(s, 1, 0, sw-1, sh-1)
-	DrawStr(s, sw/2-len(t)/2-1, 0, tcell.StyleDefault, t)
-}
-
 func renderHeader(u *Ui) {
 	screen := u.Screen
 	sw, _ := screen.Size()
 	title := formatTitle(u.Title)
-	for i, r := range u.Header.Rows() {
-		DrawStr(screen, 1, 2+i, styles[HeaderRow], r)
-	}
-	DrawLine(screen, 0, 0, sw)
+	DrawHeaderBox(screen, 0, 0, sw-1, u.yTable)
 	DrawStr(screen, sw/2-len(title)/2-1, 0, styles[HeaderRow], title)
+	nRows := u.yTable - 3
+	for i, r := range u.Header.Rows() {
+		if i < nRows {
+			DrawStr(screen, 2, 2+i, styles[HeaderRow], r)
+		} else {
+			break
+		}
+	}
+	if sw > 50 {
+		for i, l := range commandLabels {
+			if i < nRows {
+				DrawStr(screen, sw-2-len(l), i+2, styles[CommandRow], l)
+			} else {
+				return
+			}
+		}
+	}
 }
 
 func renderTable(u *Ui) {
@@ -165,30 +182,42 @@ func renderTable(u *Ui) {
 	sw, sh := screen.Size()
 	n := len(columns)
 	delta := sw / n
+	for delta < 21 {
+		n--
+		if n == 0 {
+			return
+		}
+		delta = sw / n
+	}
 	w := 1
 	tableTitle := emoji.Sprintf(" :computer: EC2 Instances (%d) ", len(table.Instances))
-	DrawLine(screen, 0, u.yTable-1, sw)
+	DrawTableBox(screen, 0, u.yTable-1, sw-1, sh-1)
 	DrawStr(screen, sw/2-len(tableTitle)/2-1, u.yTable-1, tcell.StyleDefault, tableTitle)
-	for _, v := range columns {
+
+	for _, v := range columns[0:n] {
 		DrawStr(screen, w, u.yTable+1, styles[TopRow], v)
 		w += delta
 	}
 	for i, v := range table.Instances[table.Offset:len(table.Instances)] {
-		targetStyle := styles[v.State]
 		w = 1
 		if i+2+u.yTable > sh-3 {
 			return
 		}
+		targetStyle := styles[v.State]
 		if i == table.Cursor {
 			targetStyle = styles[SelectedRow]
 		}
-		for _, str := range strings.Split(v.String(), " ") {
-			DrawStr(screen, w, u.yTable+i+2, targetStyle, str)
-			// Fill gaps drawing blank chars
-			for j := (w + len(str)); j < (w + delta); j++ {
-				DrawStr(screen, j, u.yTable+i+2, targetStyle, " ")
+		for c, str := range strings.Split(v.String(), " ") {
+			if c != n {
+				DrawStr(screen, w, u.yTable+i+2, targetStyle, str)
+				// Fill gaps drawing blank chars
+				for j := (w + len(str)); j < (w + delta); j++ {
+					DrawStr(screen, j, u.yTable+i+2, targetStyle, " ")
+				}
+				w += delta
+			} else {
+				break
 			}
-			w += delta
 		}
 	}
 }
@@ -200,8 +229,4 @@ func formatTitle(t string) string {
 func (u *Ui) NumberOfRowsDisplayed() int {
 	_, sh := u.Screen.Size()
 	return sh - u.yTable - 4
-}
-
-func handleTableResize(table InstanceTable) {
-
 }
