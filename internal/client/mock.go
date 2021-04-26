@@ -48,7 +48,7 @@ func GetMockedInstances(n int) []Instance {
 			Keyname:      fmt.Sprintf("key_%s", name),
 			State:        getRandomState(),
 			InstanceType: getRandomType(),
-			Ip:           fmt.Sprintf("192.168.1.%d", i),
+			Ip:           fmt.Sprintf("192.168.1.%d", i+10),
 			LaunchTime:   "2021-04-26/15:04:05",
 		})
 	}
