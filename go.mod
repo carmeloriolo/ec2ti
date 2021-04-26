@@ -8,6 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.5.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.3.0
 	github.com/gdamore/tcell/v2 v2.2.0
+	github.com/goombaio/namegenerator v0.0.0-20181006234301-989e774b106e
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/kyokomi/emoji v2.2.4+incompatible
 	github.com/mattn/go-runewidth v0.0.10
