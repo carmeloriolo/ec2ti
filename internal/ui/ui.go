@@ -138,10 +138,6 @@ func NewUi() *Ui {
 	if err := s.Init(); err != nil {
 		log.Fatal(err)
 	}
-	s.SetStyle(
-		tcell.StyleDefault.
-			Background(tcell.ColorBlack.TrueColor()).
-			Foreground(tcell.ColorWhite))
 	_, sh := s.Size()
 	return &Ui{
 		Title:  defaultTitle,
