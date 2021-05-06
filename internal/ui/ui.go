@@ -10,17 +10,14 @@ import (
 )
 
 const (
-	HeaderRow     = "HeaderRow"
-	TopRow        = "TopRow"
-	Row           = "Row"
-	SelectedRow   = "SelectedRow"
-	StoppedRow    = "StoppedRow"
-	CommandRow    = "Command"
-	ctrlCLabel    = "<Ctrl+C> EXIT"
-	describeLabel = "<d> DESCRIBE"
-	refreshLabel  = "<r> REFRESH"
-	searchLabel   = "</> SEARCH"
-	helpLabel     = "<?> HELP"
+	HeaderRow   = "HeaderRow"
+	TopRow      = "TopRow"
+	Row         = "Row"
+	SelectedRow = "SelectedRow"
+	StoppedRow  = "StoppedRow"
+	CommandRow  = "Command"
+	ctrlCLabel  = "<Ctrl+C> EXIT"
+	searchLabel = "</> SEARCH"
 )
 
 var (
@@ -45,10 +42,7 @@ var (
 		tcell.KeyDown:  HandleNavigateDown,
 	}
 	commandLabels = []string{
-		helpLabel,
-		refreshLabel,
 		searchLabel,
-		describeLabel,
 		ctrlCLabel,
 	}
 )
