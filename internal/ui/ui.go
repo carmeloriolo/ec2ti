@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"errors"
 	"log"
 	"strings"
 
@@ -40,6 +41,7 @@ var (
 		tcell.KeyEnter: HandleEnter,
 		tcell.KeyUp:    HandleNavigateUp,
 		tcell.KeyDown:  HandleNavigateDown,
+		KeySlash:       HandleSearch,
 	}
 	commandLabels = []string{
 		searchLabel,
@@ -137,6 +139,25 @@ func NewUi() *Ui {
 		Title:  defaultTitle,
 		Screen: s,
 		yTable: sh / componentsRatio,
+	}
+}
+
+func (u *Ui) Run() error {
+	for {
+		switch ev := u.Screen.PollEvent().(type) {
+		case *tcell.EventResize:
+			u.Render()
+		case *tcell.EventKey:
+			k := ev.Key()
+			if ev.Rune() != 0 {
+				k = tcell.Key(ev.Rune())
+			}
+			if f, present := u.Handlers[k]; present {
+				f(u)
+			}
+		default:
+			return errors.New("unexpected input")
+		}
 	}
 }
 

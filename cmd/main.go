@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/carmeloriolo/ec2ti/internal/client"
 	"github.com/carmeloriolo/ec2ti/internal/ui"
-	"github.com/gdamore/tcell/v2"
 	"github.com/urfave/cli/v2"
 )
 
@@ -49,19 +48,8 @@ func main() {
 				UserIdentity: *userIdentity,
 				Region:       c.String(awsRegion),
 			})
-			u = u.SetTable(ui.NewInstanceTable(instances, u.NumberOfRowsDisplayed())).SetHandlers(ui.DefaultHandlers)
-
-			for {
-				switch ev := u.Screen.PollEvent().(type) {
-				case *tcell.EventResize:
-					u.Render()
-				case *tcell.EventKey:
-					if f, present := u.Handlers[ev.Key()]; present {
-						f(u)
-					}
-				}
-			}
-
+			u = u.SetTable(ui.NewInstanceTable(instances, u.NumberOfRowsDisplayed()))
+			return u.SetHandlers(ui.DefaultHandlers).Run()
 		},
 	}
 	err := app.Run(os.Args)

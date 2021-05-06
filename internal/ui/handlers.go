@@ -17,6 +17,12 @@ func HandleCtrlC(u *Ui) {
 	os.Exit(0)
 }
 
+func HandleSearch(u *Ui) {
+	u.Screen.Fini()
+	log.Println("Searching")
+	os.Exit(0)
+}
+
 func HandleEnter(u *Ui) {
 	table := u.Table.(*InstanceTable)
 	u.Screen.Clear()
