@@ -46,7 +46,7 @@ var (
 		KeySlash:       HandleSearch,
 	}
 	commandLabels = []string{
-		searchLabel,
+		// searchLabel,
 		ctrlCLabel,
 	}
 )
@@ -204,7 +204,7 @@ func renderTable(u *Ui) {
 	}
 	w := 2
 	tableTitle := emoji.Sprintf(" :computer: EC2 Instances (%d) ", len(table.Instances))
-	DrawTableBox(screen, 0, u.yTable-1, sw-1, sh-1)
+	DrawTableBox(screen, 0, u.yTable-1, sw-1, sh-2)
 	DrawStr(screen, sw/2-len(tableTitle)/2-1, u.yTable-1, tcell.StyleDefault, tableTitle)
 
 	for _, v := range columns[0:n] {
@@ -213,7 +213,7 @@ func renderTable(u *Ui) {
 	}
 	for i, v := range table.Instances[table.Offset:len(table.Instances)] {
 		w = 2
-		if i+2+u.yTable > sh-3 {
+		if i+2+u.yTable > sh-4 {
 			return
 		}
 		targetStyle := styles[v.State]
@@ -241,5 +241,5 @@ func formatTitle(t string) string {
 
 func (u *Ui) NumberOfRowsDisplayed() int {
 	_, sh := u.Screen.Size()
-	return sh - u.yTable - 4
+	return sh - u.yTable - 5
 }

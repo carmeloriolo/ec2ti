@@ -18,9 +18,8 @@ func HandleCtrlC(u *Ui) {
 }
 
 func HandleSearch(u *Ui) {
-	u.Screen.Fini()
 	log.Println("Searching")
-	os.Exit(0)
+	u.Render()
 }
 
 func HandleEnter(u *Ui) {
