@@ -41,6 +41,8 @@ var (
 		tcell.KeyEnter: HandleEnter,
 		tcell.KeyUp:    HandleNavigateUp,
 		tcell.KeyDown:  HandleNavigateDown,
+		KeyK:           HandleNavigateUp,
+		KeyJ:           HandleNavigateDown,
 		KeySlash:       HandleSearch,
 	}
 	commandLabels = []string{
