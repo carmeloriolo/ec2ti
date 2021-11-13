@@ -152,8 +152,9 @@ func NewUi() *Ui {
 func (u *Ui) Run() error {
 	for {
 		switch ev := u.Screen.PollEvent().(type) {
-		case *tcell.EventResize:
 		case *tcell.EventError:
+			continue
+		case *tcell.EventResize:
 			u.Render()
 		case *tcell.EventKey:
 			k := ev.Key()

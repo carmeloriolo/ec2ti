@@ -15,7 +15,6 @@ type HandlerMap map[tcell.Key]Handler
 
 func HandleCtrlC(u *Ui) {
 	u.Screen.Fini()
-	log.Println("Exiting...Bye")
 	os.Exit(0)
 }
 
@@ -36,7 +35,7 @@ func HandleShell(u *Ui) {
 	u.Screen.Clear()
 	u.Screen.Suspend()
 	it := u.Table.(*InstanceTable).Instances[table.Cursor+table.Offset] // it
-	user, pkey, err := startPrompt()
+	user, pkey, err := startPrompt(it.Keyname)
 	if err != nil {
 		log.Println(fmt.Sprintf("Error: %s", err.Error()))
 		time.Sleep(time.Second * 2) // Give user some seconds to read the error

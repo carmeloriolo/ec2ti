@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/kyokomi/emoji"
 	"github.com/manifoldco/promptui"
 )
 
@@ -25,7 +26,7 @@ func runSelectPrompt(label string, items []string) (string, error) {
 }
 
 func promptUserSelect() (string, error) {
-	return runSelectPrompt("Select user", []string{
+	return runSelectPrompt(emoji.Sprintf(":man_technologist: Select remote user"), []string{
 		"ec2-user",
 		"centos",
 		"ubuntu",
@@ -35,7 +36,7 @@ func promptUserSelect() (string, error) {
 
 func promptUserInput() string {
 	prompt := promptui.Prompt{
-		Label: "Insert remote user",
+		Label: emoji.Sprintf(":man_technologist: Insert remote user"),
 	}
 	user, err := prompt.Run()
 	if err != nil {
@@ -44,7 +45,7 @@ func promptUserInput() string {
 	return user
 }
 
-func promptKeysSelect() (string, error) {
+func promptKeysSelect(awsKeyname string) (string, error) {
 	keys := []string{}
 	homedir, err := os.UserHomeDir()
 	if err != nil {
@@ -57,10 +58,12 @@ func promptKeysSelect() (string, error) {
 	for _, f := range files {
 		keys = append(keys, f.Name())
 	}
-	return runSelectPrompt("Select private key", keys)
+
+	label := emoji.Sprintf("Select Private Key | :computer: %s", awsKeyname)
+	return runSelectPrompt(label, keys)
 }
 
-func startPrompt() (string, string, error) {
+func startPrompt(awsKeyname string) (string, string, error) {
 	user, err := promptUserSelect()
 	if err != nil {
 		return "", "", err
@@ -68,7 +71,7 @@ func startPrompt() (string, string, error) {
 	if user == otherLabel {
 		user = promptUserInput()
 	}
-	pkey, err := promptKeysSelect()
+	pkey, err := promptKeysSelect(awsKeyname)
 	if err != nil {
 		return "", "", err
 	}
