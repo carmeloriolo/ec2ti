@@ -1,4 +1,5 @@
 bin/
+built/
 vendor/
 ec2ti
 main
