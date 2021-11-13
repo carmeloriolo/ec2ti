@@ -1,4 +1,4 @@
-name: MakeCode Arcade Binary Release
+name: Upload artifacts
 
 on: 
   release:
