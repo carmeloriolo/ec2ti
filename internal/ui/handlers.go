@@ -33,14 +33,19 @@ func HandleDescribe(u *Ui) {
 func HandleShell(u *Ui) {
 	table := u.Table.(*InstanceTable)
 	u.Screen.Clear()
-	u.Screen.Suspend()
+	err := u.Screen.Suspend()
+	if err != nil {
+		return
+	}
 	it := u.Table.(*InstanceTable).Instances[table.Cursor+table.Offset] // it
 	user, pkey, err := startPrompt(it.Keyname)
 	if err != nil {
 		log.Println(fmt.Sprintf("Error: %s", err.Error()))
 		time.Sleep(time.Second * 2) // Give user some seconds to read the error
-		u.Screen.Resume()
-		u.Render()
+		err = u.Screen.Resume()
+		if err == nil {
+			u.Render()
+		}
 		return
 	}
 	host := fmt.Sprintf("%s@%s", user, it.Ip)
@@ -68,7 +73,10 @@ func HandleShell(u *Ui) {
 		log.Println(fmt.Sprintf("Error: %s", err.Error()))
 		time.Sleep(time.Second * 2) // Give user some seconds to read the error
 	}
-	u.Screen.Resume()
+	err = u.Screen.Resume()
+	if err != nil {
+		return
+	}
 	u.Render()
 }
 
