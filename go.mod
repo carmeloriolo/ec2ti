@@ -11,6 +11,7 @@ require (
 	github.com/goombaio/namegenerator v0.0.0-20181006234301-989e774b106e
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/kyokomi/emoji v2.2.4+incompatible
+	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-runewidth v0.0.10
 	github.com/urfave/cli/v2 v2.3.0
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect

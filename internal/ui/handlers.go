@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
+	"time"
 
 	"github.com/gdamore/tcell/v2"
 )
@@ -13,22 +15,71 @@ type HandlerMap map[tcell.Key]Handler
 
 func HandleCtrlC(u *Ui) {
 	u.Screen.Fini()
-	log.Println("CTRLC Received...Exiting")
 	os.Exit(0)
 }
 
 func HandleSearch(u *Ui) {
-	log.Println("Searching")
+	log.Println("TODO Search Instance")
+	time.Sleep(time.Second * 2) // Give user some seconds to read the error
 	u.Render()
 }
 
-func HandleEnter(u *Ui) {
+func HandleDescribe(u *Ui) {
+	log.Println("TODO Describe Instance")
+	time.Sleep(time.Second * 2) // Give user some seconds to read the error
+	u.Render()
+}
+
+func HandleShell(u *Ui) {
 	table := u.Table.(*InstanceTable)
 	u.Screen.Clear()
-	u.Screen.Fini()
-	it := u.Table.(*InstanceTable)
-	fmt.Printf("Selected: %s\n", it.Instances[table.Cursor+table.Offset])
-	os.Exit(0)
+	err := u.Screen.Suspend()
+	if err != nil {
+		return
+	}
+	it := u.Table.(*InstanceTable).Instances[table.Cursor+table.Offset] // it
+	port, user, pkey, err := startPrompt(it.Keyname)
+	if err != nil {
+		log.Println(fmt.Sprintf("Error: %s", err.Error()))
+		time.Sleep(time.Second * 2) // Give user some seconds to read the error
+		err = u.Screen.Resume()
+		if err == nil {
+			u.Render()
+		}
+		return
+	}
+	host := fmt.Sprintf("%s@%s", user, it.Ip)
+	pkey = fmt.Sprintf("~/.ssh/%s", pkey)
+	cmd := exec.Command(
+		"ssh",
+		"-o ConnectTimeout=5",
+		"-o StrictHostKeyChecking=no",
+		"-i",
+		pkey,
+		"-t",
+		host,
+		"-p",
+		port,
+		"/bin/bash")
+	// fmt.Println(cmd.String())
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Start()
+	if err != nil {
+		log.Println(fmt.Sprintf("Error: %s", err.Error()))
+		time.Sleep(time.Second * 2) // Give user some seconds to read the error
+	}
+	err = cmd.Wait()
+	if err != nil {
+		log.Println(fmt.Sprintf("Error: %s", err.Error()))
+		time.Sleep(time.Second * 2) // Give user some seconds to read the error
+	}
+	err = u.Screen.Resume()
+	if err != nil {
+		return
+	}
+	u.Render()
 }
 
 func HandleNavigateUp(u *Ui) {

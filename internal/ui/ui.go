@@ -11,14 +11,16 @@ import (
 )
 
 const (
-	HeaderRow   = "HeaderRow"
-	TopRow      = "TopRow"
-	Row         = "Row"
-	SelectedRow = "SelectedRow"
-	StoppedRow  = "StoppedRow"
-	CommandRow  = "Command"
-	ctrlCLabel  = "<Ctrl+C> EXIT"
-	searchLabel = "</> SEARCH"
+	HeaderRow     = "HeaderRow"
+	TopRow        = "TopRow"
+	Row           = "Row"
+	SelectedRow   = "SelectedRow"
+	StoppedRow    = "StoppedRow"
+	CommandRow    = "Command"
+	ctrlCLabel    = "<Ctrl+C> Exit"
+	searchLabel   = "</> Search"
+	describeLabel = "<d> Describe"
+	shellLabel    = "<s> Shell"
 )
 
 var (
@@ -38,15 +40,18 @@ var (
 	}
 	DefaultHandlers = HandlerMap{
 		tcell.KeyCtrlC: HandleCtrlC,
-		tcell.KeyEnter: HandleEnter,
 		tcell.KeyUp:    HandleNavigateUp,
 		tcell.KeyDown:  HandleNavigateDown,
 		KeyK:           HandleNavigateUp,
 		KeyJ:           HandleNavigateDown,
+		KeyD:           HandleDescribe,
+		KeyS:           HandleShell,
 		KeySlash:       HandleSearch,
 	}
 	commandLabels = []string{
-		// searchLabel,
+		searchLabel,
+		describeLabel,
+		shellLabel,
 		ctrlCLabel,
 	}
 )
@@ -147,6 +152,8 @@ func NewUi() *Ui {
 func (u *Ui) Run() error {
 	for {
 		switch ev := u.Screen.PollEvent().(type) {
+		case *tcell.EventError:
+			continue
 		case *tcell.EventResize:
 			u.Render()
 		case *tcell.EventKey:
