@@ -17,10 +17,9 @@ const (
 
 func runSelectPrompt(label string, items []string) (string, error) {
 	prompt := promptui.Select{
-		Label:     label,
-		Items:     items,
-		IsVimMode: true,
-		Size:      30,
+		Label: label,
+		Items: items,
+		Size:  30,
 	}
 	_, retval, err := prompt.Run()
 	if err != nil {
