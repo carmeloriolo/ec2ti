@@ -1,9 +1,11 @@
 package ui
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 
 	"github.com/kyokomi/emoji"
 	"github.com/manifoldco/promptui"
@@ -15,8 +17,10 @@ const (
 
 func runSelectPrompt(label string, items []string) (string, error) {
 	prompt := promptui.Select{
-		Label: label,
-		Items: items,
+		Label:     label,
+		Items:     items,
+		IsVimMode: true,
+		Size:      30,
 	}
 	_, retval, err := prompt.Run()
 	if err != nil {
@@ -63,17 +67,38 @@ func promptKeysSelect(awsKeyname string) (string, error) {
 	return runSelectPrompt(label, keys)
 }
 
-func startPrompt(awsKeyname string) (string, string, error) {
+func promptPortInput() string {
+	validate := func(input string) error {
+		_, err := strconv.Atoi(input)
+		if err != nil {
+			return errors.New("Invalid port number")
+		}
+		return nil
+	}
+	prompt := promptui.Prompt{
+		Label:    emoji.Sprintf("Insert SSH Port"),
+		Validate: validate,
+		Default:  "22",
+	}
+	port, err := prompt.Run()
+	if err != nil {
+		return ""
+	}
+	return port
+}
+
+func startPrompt(awsKeyname string) (string, string, string, error) {
+	port := promptPortInput()
 	user, err := promptUserSelect()
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 	if user == otherLabel {
 		user = promptUserInput()
 	}
 	pkey, err := promptKeysSelect(awsKeyname)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
-	return user, pkey, nil
+	return port, user, pkey, nil
 }

@@ -38,7 +38,7 @@ func HandleShell(u *Ui) {
 		return
 	}
 	it := u.Table.(*InstanceTable).Instances[table.Cursor+table.Offset] // it
-	user, pkey, err := startPrompt(it.Keyname)
+	port, user, pkey, err := startPrompt(it.Keyname)
 	if err != nil {
 		log.Println(fmt.Sprintf("Error: %s", err.Error()))
 		time.Sleep(time.Second * 2) // Give user some seconds to read the error
@@ -58,6 +58,8 @@ func HandleShell(u *Ui) {
 		pkey,
 		"-t",
 		host,
+		"-p",
+		port,
 		"/bin/bash")
 	// fmt.Println(cmd.String())
 	cmd.Stdin = os.Stdin
