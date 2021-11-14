@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/carmeloriolo/ec2ti/internal/components"
 	"github.com/gdamore/tcell/v2"
 	"github.com/gdamore/tcell/v2/encoding"
 	"github.com/kyokomi/emoji"
@@ -56,15 +57,10 @@ var (
 	}
 )
 
-type UiInterface interface {
-	Render()
-	GetScreen() tcell.Screen
-}
-
 type Ui struct {
 	Title    string
-	Header   HeaderInterface
-	Table    TableInterface
+	Header   components.Header
+	Table    components.Table
 	Handlers HandlerMap
 	Screen   tcell.Screen
 	yTable   int
@@ -95,7 +91,7 @@ func (u *Ui) SetTitle(s string) *Ui {
 	return u
 }
 
-func (u *Ui) SetHeader(h HeaderInterface) *Ui {
+func (u *Ui) SetHeader(h components.Header) *Ui {
 	u = &Ui{
 		Title:    u.Title,
 		Header:   h,
@@ -107,7 +103,7 @@ func (u *Ui) SetHeader(h HeaderInterface) *Ui {
 	return u
 }
 
-func (u *Ui) SetTable(t TableInterface) *Ui {
+func (u *Ui) SetTable(t components.Table) *Ui {
 	u = &Ui{
 		Title:    u.Title,
 		Header:   u.Header,
@@ -170,16 +166,21 @@ func (u *Ui) Run() error {
 	}
 }
 
+func (u *Ui) NumberOfRowsDisplayed() int {
+	_, sh := u.Screen.Size()
+	return sh - u.yTable - 5
+}
+
 func renderHeader(u *Ui) {
 	screen := u.Screen
 	sw, _ := screen.Size()
 	title := formatTitle(u.Title)
-	DrawHeaderBox(screen, 0, 0, sw-1, u.yTable)
-	DrawStr(screen, sw/2-len(title)/2-1, 0, styles[HeaderRow], title)
+	components.DrawHeaderBox(screen, 0, 0, sw-1, u.yTable)
+	components.DrawStr(screen, sw/2-len(title)/2-1, 0, styles[HeaderRow], title)
 	nRows := u.yTable - 3
 	for i, r := range u.Header.Rows() {
 		if i < nRows {
-			DrawStr(screen, 2, 2+i, styles[HeaderRow], r)
+			components.DrawStr(screen, 2, 2+i, styles[HeaderRow], r)
 		} else {
 			break
 		}
@@ -187,7 +188,7 @@ func renderHeader(u *Ui) {
 	if sw > 50 {
 		for i, l := range commandLabels {
 			if i < nRows {
-				DrawStr(screen, sw-2-len(l), i+2, styles[CommandRow], l)
+				components.DrawStr(screen, sw-2-len(l), i+2, styles[CommandRow], l)
 			} else {
 				return
 			}
@@ -196,7 +197,7 @@ func renderHeader(u *Ui) {
 }
 
 func renderTable(u *Ui) {
-	table := u.Table.(*InstanceTable)
+	table := u.Table.(*components.InstanceTable)
 	columns := u.Table.Columns()
 	screen := u.Screen
 	sw, sh := screen.Size()
@@ -211,11 +212,11 @@ func renderTable(u *Ui) {
 	}
 	w := 2
 	tableTitle := emoji.Sprintf(" :computer: EC2 Instances (%d) ", len(table.Instances))
-	DrawTableBox(screen, 0, u.yTable-1, sw-1, sh-2)
-	DrawStr(screen, sw/2-len(tableTitle)/2-1, u.yTable-1, tcell.StyleDefault, tableTitle)
+	components.DrawTableBox(screen, 0, u.yTable-1, sw-1, sh-2)
+	components.DrawStr(screen, sw/2-len(tableTitle)/2-1, u.yTable-1, tcell.StyleDefault, tableTitle)
 
 	for _, v := range columns[0:n] {
-		DrawStr(screen, w, u.yTable+1, styles[TopRow], v)
+		components.DrawStr(screen, w, u.yTable+1, styles[TopRow], v)
 		w += delta
 	}
 	for i, v := range table.Instances[table.Offset:len(table.Instances)] {
@@ -229,10 +230,10 @@ func renderTable(u *Ui) {
 		}
 		for c, str := range strings.Split(v.String(), " ") {
 			if c != n {
-				DrawStr(screen, w, u.yTable+i+2, targetStyle, str)
+				components.DrawStr(screen, w, u.yTable+i+2, targetStyle, str)
 				// Fill gaps drawing blank chars
 				for j := (w + len(str)); j < (w + delta); j++ {
-					DrawStr(screen, j, u.yTable+i+2, targetStyle, " ")
+					components.DrawStr(screen, j, u.yTable+i+2, targetStyle, " ")
 				}
 				w += delta
 			} else {
@@ -244,9 +245,4 @@ func renderTable(u *Ui) {
 
 func formatTitle(t string) string {
 	return emoji.Sprintf(" :rocket: %s :beer:", t)
-}
-
-func (u *Ui) NumberOfRowsDisplayed() int {
-	_, sh := u.Screen.Size()
-	return sh - u.yTable - 5
 }

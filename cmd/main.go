@@ -7,6 +7,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/carmeloriolo/ec2ti/internal/client"
+	"github.com/carmeloriolo/ec2ti/internal/components"
 	"github.com/carmeloriolo/ec2ti/internal/ui"
 	"github.com/urfave/cli/v2"
 )
@@ -46,11 +47,11 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			u := ui.NewUi().SetTitle(appName).SetHeader(&ui.InfoHeader{
+			u := ui.NewUi().SetTitle(appName).SetHeader(&components.InfoHeader{
 				UserIdentity: *userIdentity,
 				Region:       c.String(awsRegion),
 			})
-			u = u.SetTable(ui.NewInstanceTable(instances, u.NumberOfRowsDisplayed()))
+			u = u.SetTable(components.NewInstanceTable(instances, u.NumberOfRowsDisplayed()))
 			return u.SetHandlers(ui.DefaultHandlers).Run()
 		},
 	}

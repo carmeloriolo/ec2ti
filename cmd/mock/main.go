@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/carmeloriolo/ec2ti/internal/client"
+	"github.com/carmeloriolo/ec2ti/internal/components"
 	"github.com/carmeloriolo/ec2ti/internal/ui"
 	"github.com/urfave/cli/v2"
 )
@@ -33,11 +34,11 @@ func main() {
 		Action: func(c *cli.Context) error {
 			instances := client.GetMockedInstances(64)
 			userIdentity := client.GetMockedUser()
-			u := ui.NewUi().SetTitle(appName).SetHeader(&ui.InfoHeader{
+			u := ui.NewUi().SetTitle(appName).SetHeader(&components.InfoHeader{
 				UserIdentity: *userIdentity,
 				Region:       c.String(awsRegion),
 			})
-			u = u.SetTable(ui.NewInstanceTable(instances, u.NumberOfRowsDisplayed()))
+			u = u.SetTable(components.NewInstanceTable(instances, u.NumberOfRowsDisplayed()))
 			return u.SetHandlers(ui.DefaultHandlers).Run()
 		},
 	}
