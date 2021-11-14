@@ -93,3 +93,13 @@ jobs:
           asset_path: ./artifacts/windows-amd64-ec2ti.tar.gz
           asset_name: windows-amd64-ec2ti.tar.gz
           asset_content_type: application/gzip
+
+      - name: checksum 
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./artifacts/checksum.txt
+          asset_name: checksum.txt 
+          asset_content_type: text/plain 
