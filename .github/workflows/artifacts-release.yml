@@ -10,20 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.15
-
-      - name: Build
-        run: go build -v ./...
-
-      - name: Test
-        run: go test -v ./...
         
       - name: Artifacts
-        run: make artifacts VERSION=${{ github.event.release.tag_name }}
+        run: docker run -v $(pwd):/home/dev -w /home/dev golang:1.16 make artifacts VERSION=${{ github.event.release.tag_name }}
 
       - name: darwin amd64 
         uses: actions/upload-release-asset@v1.0.1
