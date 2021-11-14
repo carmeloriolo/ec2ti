@@ -1,4 +1,8 @@
-artifacts:
+clean:
+	rm -rf ./bin
+	rm -rf ./artifacts 
+
+artifacts: clean
 	./scripts/build.sh $(VERSION)
 
 build:

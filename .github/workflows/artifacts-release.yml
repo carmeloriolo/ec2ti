@@ -31,7 +31,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./bin/darwin-amd64-ec2ti.tar.gz
+          asset_path: ./artifacts/darwin-amd64-ec2ti.tar.gz
           asset_name: darwin-amd64-ec2ti.tar.gz
           asset_content_type: application/gzip
 
@@ -41,6 +41,66 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./bin/darwin-arm64-ec2ti.tar.gz
+          asset_path: ./artifacts/darwin-arm64-ec2ti.tar.gz
           asset_name: darwin-amd64-ec2ti.tar.gz
+          asset_content_type: application/gzip
+
+      - name: linux 386 
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./artifacts/linux-386-ec2ti.tar.gz
+          asset_name: linux-386-ec2ti.tar.gz
+          asset_content_type: application/gzip
+
+      - name: linux amd64 
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./artifacts/linux-amd64-ec2ti.tar.gz
+          asset_name: linux-amd64-ec2ti.tar.gz
+          asset_content_type: application/gzip
+
+      - name: linux ppc64 
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./artifacts/linux-ppc64-ec2ti.tar.gz
+          asset_name: linux-ppc64-ec2ti.tar.gz
+          asset_content_type: application/gzip
+
+      - name: linux ppc64le
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./artifacts/linux-ppc64le-ec2ti.tar.gz
+          asset_name: linux-ppc64le-ec2ti.tar.gz
+          asset_content_type: application/gzip
+
+      - name: windows 386 
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./artifacts/windows-amd64-ec2ti.tar.gz
+          asset_name: windows-386-ec2ti.tar.gz
+          asset_content_type: application/gzip
+
+      - name: windows amd64 
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./artifacts/windows-amd64-ec2ti.tar.gz
+          asset_name: windows-amd64-ec2ti.tar.gz
           asset_content_type: application/gzip

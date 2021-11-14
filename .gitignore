@@ -1,5 +1,5 @@
 bin/
-built/
+artifacts/
 vendor/
 ec2ti
 main
