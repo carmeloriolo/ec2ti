@@ -36,7 +36,7 @@ func HandleNavigateUp(u *Ui) {
 func HandleNavigateDown(u *Ui) {
 	table := u.Table.(*components.InstanceTable)
 	n := table.RowsDisplayed
-	if table.Cursor < n-1 {
+	if table.Cursor < n-1 && table.Cursor < len(table.Instances)-1 {
 		table.Cursor++
 	} else {
 		if table.Cursor+table.Offset < len(table.Instances)-1 {
