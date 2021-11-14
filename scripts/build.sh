@@ -1,5 +1,6 @@
 #!/bin/bash
 
+VERSION=$1
 
 PLATFORMS="$PLATFORMS windows/amd64 windows/386"
 PLATFORMS="$PLATFORMS linux/amd64 linux/386"
@@ -14,7 +15,7 @@ for PLATFORM in $PLATFORMS; do
   APP="ec2ti"
   echo "Building ${PLATFORM}"
   if [[ "${GOOS}" == "windows" ]]; then APP="ec2ti.exe"; fi
-  GOOS=${GOOS} GOARCH=${GOARCH} go build -o ./bin/${APP} cmd/main.go
+  GOOS=${GOOS} GOARCH=${GOARCH} go build -v -o ./bin/${APP} -ldflags="-X github.com/carmeloriolo/ec2ti/cmd/main.appVersion=${VERSION}" ./cmd/main.go
   cd ./bin
   tar cvzf ${GOOS}-${GOARCH}-ec2ti.tar.gz ${APP}
   mv ${GOOS}-${GOARCH}-ec2ti.tar.gz ../built/

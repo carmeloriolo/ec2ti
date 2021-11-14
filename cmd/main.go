@@ -14,6 +14,7 @@ import (
 const (
 	appName        = "Ec2Ti"
 	appDescription = "The terminal user interface to connect to your AWS EC2 instances easily"
+	appVersion     = ""
 	awsRegion      = "region"
 )
 
@@ -28,9 +29,10 @@ var (
 
 func main() {
 	app := &cli.App{
-		Name:  appName,
-		Usage: appDescription,
-		Flags: appFlags,
+		Name:    appName,
+		Usage:   appDescription,
+		Flags:   appFlags,
+		Version: appVersion,
 		Action: func(c *cli.Context) error {
 			cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(c.String(awsRegion)))
 			if err != nil {

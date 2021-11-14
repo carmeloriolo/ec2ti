@@ -1,8 +1,8 @@
 artifacts:
-	./scripts/build.sh
+	./scripts/build.sh $(VERSION)
 
 build:
-	go go build -o ./bin/ec2ti cmd/main.go
+	go build -o ./bin/ec2ti cmd/main.go
 
 run:
 	go run cmd/main.go
