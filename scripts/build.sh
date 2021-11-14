@@ -17,7 +17,7 @@ for PLATFORM in $PLATFORMS; do
   ARTIFACT="${GOOS}-${GOARCH}-ec2ti.tar.gz"
   echo "Building ${PLATFORM}"
   if [[ "${GOOS}" == "windows" ]]; then APP="ec2ti.exe"; fi
-  GOOS=${GOOS} GOARCH=${GOARCH} go build -v -o ./bin/${APP} -ldflags="-s -w -X main.AppVersion=${VERSION}" ./cmd/main.go
+  GOOS=${GOOS} GOARCH=${GOARCH} go build -v -o ./bin/${APP} -ldflags="-X main.AppVersion=${VERSION}" ./cmd/main.go
   tar cvzf ${ARTIFACT} -C ./bin ${APP}
   if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     md5sum ${ARTIFACT} >> ./artifacts/checksum.txt
