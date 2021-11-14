@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  terraform-init:
+    container_name: terraform-ec2ti-init
+    image: hashicorp/terraform:1.0.11
+    working_dir: /home/dev
+    depends_on:
+      - localstack
+    volumes:
+      - "${PWD}:/home/dev"
+    command: init
+  terraform-apply:
+    container_name: terraform-ec2ti-apply
+    image: hashicorp/terraform:1.0.11
+    working_dir: /home/dev
+    depends_on:
+      - localstack
+      - terraform-init
+    volumes:
+      - "${PWD}:/home/dev"
+    environment:
+      - AWS_ACCESS_KEY_ID=tes"
+      - AWS_SECRET_ACCESS_KEY=test
+    command: apply -auto-approve -input=false
+  localstack:
+    container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4571:4571"
+    environment:
+      - SERVICES=${SERVICES- }
+      - DEBUG=${DEBUG- }
+      - DATA_DIR=${DATA_DIR- }
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
+      - HOST_TMP_FOLDER=${TMPDIR:-/tmp/}localstack
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${TMPDIR:-/tmp}/localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
