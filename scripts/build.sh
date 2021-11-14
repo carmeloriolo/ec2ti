@@ -3,10 +3,10 @@
 set -eox pipefail
 
 VERSION=$1
+PLATFORMS="$PLATFORMS darwin/arm64 darwin/amd64"
 PLATFORMS="$PLATFORMS windows/amd64 windows/386"
 PLATFORMS="$PLATFORMS linux/amd64 linux/386"
 PLATFORMS="$PLATFORMS linux/ppc64 linux/ppc64le"
-PLATFORMS="$PLATFORMS darwin/arm64 darwin/amd64"
 
 mkdir -p artifacts
 
