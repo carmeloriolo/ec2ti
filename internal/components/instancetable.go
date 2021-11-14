@@ -1,22 +1,11 @@
-package ui
+package components
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 
 	"github.com/carmeloriolo/ec2ti/internal/client"
 )
-
-type HeaderInterface interface {
-	Rows() []string
-}
-
-type TableInterface interface {
-	Columns() []string
-	Rows() []string
-	OnTableResize(int)
-}
 
 type InstanceTable struct {
 	Instances     []client.Instance
@@ -89,19 +78,4 @@ func NewInstanceTable(instances []client.Instance, n int) *InstanceTable {
 		Offset:        0,
 		RowsDisplayed: n,
 	}
-}
-
-type InfoHeader struct {
-	UserIdentity client.CallerIdentity
-	Region       string
-}
-
-func (u *InfoHeader) Rows() []string {
-	return []string{
-		fmt.Sprintf("UserId: %s", u.UserIdentity.UserId),
-		fmt.Sprintf("Account: %s", u.UserIdentity.Account),
-		fmt.Sprintf("Arn: %s", u.UserIdentity.Arn),
-		fmt.Sprintf("Region: %s", u.Region),
-	}
-
 }
