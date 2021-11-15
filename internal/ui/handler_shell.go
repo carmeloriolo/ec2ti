@@ -8,9 +8,10 @@ import (
 	"time"
 
 	"github.com/carmeloriolo/ec2ti/internal/components"
+	"github.com/gdamore/tcell/v2"
 )
 
-func HandleShell(u *Ui) {
+func HandleShell(u *Ui, k tcell.Key) {
 	table := u.Table.(*components.InstanceTable)
 	u.Screen.Clear()
 	err := u.Screen.Suspend()

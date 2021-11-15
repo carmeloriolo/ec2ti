@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/carmeloriolo/ec2ti/internal/client"
+	"github.com/kyokomi/emoji"
 )
 
 type InstanceTable struct {
@@ -12,6 +13,7 @@ type InstanceTable struct {
 	Cursor        int
 	Offset        int
 	RowsDisplayed int
+	Title         string
 }
 
 func (t *InstanceTable) Columns() []string {
@@ -71,11 +73,32 @@ func (t *InstanceTable) OnTableResize(nNew int) {
 
 }
 
+func (t *InstanceTable) SetTitle(title string) {
+	t.Title = title
+}
+
+func (t *InstanceTable) SetCursor(n int) {
+	t.Cursor = n
+}
+
+func (t *InstanceTable) SetOffset(n int) {
+	t.Offset = n
+}
+
+func (t *InstanceTable) DefaultTitle(n int) string {
+	return formatDefaultTitle(n)
+}
+
 func NewInstanceTable(instances []client.Instance, n int) *InstanceTable {
 	return &InstanceTable{
 		Instances:     instances,
+		Title:         formatDefaultTitle(n),
 		Cursor:        0,
 		Offset:        0,
 		RowsDisplayed: n,
 	}
+}
+
+func formatDefaultTitle(n int) string {
+	return emoji.Sprintf(" :computer: EC2 Instances (%d) ", n)
 }

@@ -19,7 +19,7 @@ const (
 	StoppedRow    = "StoppedRow"
 	CommandRow    = "Command"
 	ctrlCLabel    = "<Ctrl+C> Exit"
-	searchLabel   = "</> Search"
+	searchLabel   = "</> Search by Name"
 	describeLabel = "<d> Describe"
 	shellLabel    = "<s> Shell"
 )
@@ -58,12 +58,13 @@ var (
 )
 
 type Ui struct {
-	Title    string
-	Header   components.Header
-	Table    components.Table
-	Handlers HandlerMap
-	Screen   tcell.Screen
-	yTable   int
+	Title      string
+	Header     components.Header
+	Table      components.Table
+	Handlers   HandlerMap
+	Screen     tcell.Screen
+	yTable     int
+	searchMode bool
 }
 
 func (u *Ui) Render() {
@@ -139,9 +140,10 @@ func NewUi() *Ui {
 	}
 	_, sh := s.Size()
 	return &Ui{
-		Title:  defaultTitle,
-		Screen: s,
-		yTable: sh / componentsRatio,
+		Title:      defaultTitle,
+		searchMode: false,
+		Screen:     s,
+		yTable:     sh / componentsRatio,
 	}
 }
 
@@ -157,8 +159,18 @@ func (u *Ui) Run() error {
 			if ev.Rune() != 0 {
 				k = tcell.Key(ev.Rune())
 			}
-			if f, present := u.Handlers[k]; present {
-				f(u)
+			if !u.searchMode {
+				if f, present := u.Handlers[k]; present {
+					f(u, k)
+				}
+			} else {
+				if k != tcell.KeyCtrlC {
+					(u.Handlers[KeySlash])(u, k)
+				} else {
+					if f, present := u.Handlers[k]; present {
+						f(u, k)
+					}
+				}
 			}
 		default:
 			return errors.New("unexpected input")
@@ -211,15 +223,16 @@ func renderTable(u *Ui) {
 		delta = sw / n
 	}
 	w := 2
-	tableTitle := emoji.Sprintf(" :computer: EC2 Instances (%d) ", len(table.Instances))
 	components.DrawTableBox(screen, 0, u.yTable-1, sw-1, sh-2)
-	components.DrawStr(screen, sw/2-len(tableTitle)/2-1, u.yTable-1, tcell.StyleDefault, tableTitle)
+	components.DrawStr(screen, sw/2-len(table.Title)/2-1, u.yTable-1, tcell.StyleDefault, table.Title)
 
 	for _, v := range columns[0:n] {
 		components.DrawStr(screen, w, u.yTable+1, styles[TopRow], v)
 		w += delta
 	}
-	for i, v := range table.Instances[table.Offset:len(table.Instances)] {
+	tableInstances := table.Instances[table.Offset:len(table.Instances)]
+
+	for i, v := range tableInstances {
 		w = 2
 		if i+2+u.yTable > sh-4 {
 			return
