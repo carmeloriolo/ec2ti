@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/carmeloriolo/ec2ti/internal/client"
+	"github.com/gdamore/tcell/v2"
 	"github.com/kyokomi/emoji"
 )
 
@@ -87,6 +88,68 @@ func (t *InstanceTable) SetOffset(n int) {
 
 func (t *InstanceTable) DefaultTitle(n int) string {
 	return formatDefaultTitle(n)
+}
+
+func (t *InstanceTable) GetPositionByInstanceName(s string) (int, int) {
+	rowsDisplayed := t.RowsDisplayed
+	resIndex := 0
+	s = strings.ToLower(s)
+	for i, v := range t.Instances {
+		if strings.HasPrefix(strings.ToLower(v.Name), s) {
+			resIndex = i
+			break
+		}
+	}
+	if resIndex < rowsDisplayed {
+		return resIndex, 0
+	}
+	return (rowsDisplayed - 1), (resIndex - rowsDisplayed + 1)
+}
+
+func (table *InstanceTable) Render(screen tcell.Screen, startY int) {
+	columns := table.Columns()
+	sw, sh := screen.Size()
+	n := len(columns)
+	delta := sw / n
+	for delta < 21 {
+		n--
+		if n == 0 {
+			return
+		}
+		delta = sw / n
+	}
+	w := 2
+	DrawTableBox(screen, 0, startY-1, sw-1, sh-2)
+	DrawStr(screen, sw/2-len(table.Title)/2-1, startY-1, tcell.StyleDefault, table.Title)
+
+	for _, v := range columns[0:n] {
+		DrawStr(screen, w, startY+1, styles[TopRow], v)
+		w += delta
+	}
+	tableInstances := table.Instances[table.Offset:len(table.Instances)]
+
+	for i, v := range tableInstances {
+		w = 2
+		if i+2+startY > sh-4 {
+			return
+		}
+		targetStyle := styles[v.State]
+		if i == table.Cursor {
+			targetStyle = styles[SelectedRow]
+		}
+		for c, str := range strings.Split(v.String(), " ") {
+			if c != n {
+				DrawStr(screen, w, startY+i+2, targetStyle, str)
+				// Fill gaps drawing blank chars
+				for j := (w + len(str)); j < (w + delta); j++ {
+					DrawStr(screen, j, startY+i+2, targetStyle, " ")
+				}
+				w += delta
+			} else {
+				break
+			}
+		}
+	}
 }
 
 func NewInstanceTable(instances []client.Instance, n int) *InstanceTable {

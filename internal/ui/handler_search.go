@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/carmeloriolo/ec2ti/internal/components"
 	"github.com/gdamore/tcell/v2"
@@ -14,6 +15,12 @@ var (
 	searchPrefix = fmt.Sprintf("%s ", searchIcon)
 	isValidKey   = regexp.MustCompile(`^[a-zA-Z0-9 +-=._:/@]+$`).MatchString
 )
+
+func updateCursor(t *components.InstanceTable, s string) {
+	cursor, offset := t.GetPositionByInstanceName(s)
+	t.SetCursor(cursor)
+	t.SetOffset(offset)
+}
 
 func HandleSearch(u *Ui, k tcell.Key) {
 	table := u.Table.(*components.InstanceTable)
@@ -29,20 +36,25 @@ func HandleSearch(u *Ui, k tcell.Key) {
 			u.searchMode = !u.searchMode
 		} else {
 			if len(table.Title) < 32 {
-				table.SetTitle(fmt.Sprintf("%s%s", table.Title, string(k)))
+				title := fmt.Sprintf("%s%s", table.Title, string(k))
+				table.SetTitle(title)
+				updateCursor(table, strings.TrimPrefix(title, searchPrefix))
 			}
 		}
 	case KeyBackspace:
 		if len(table.Title) > len(searchPrefix) {
-			table.SetTitle(table.Title[:len(table.Title)-1])
+			title := table.Title[:len(table.Title)-1]
+			table.SetTitle(title)
+			updateCursor(table, strings.TrimPrefix(title, searchPrefix))
 		}
 	default:
-		if isValidKey(string(k)) {
+		if isValidKey(fmt.Sprint(k)) {
 			if len(table.Title) < 32 {
-				table.SetTitle(fmt.Sprintf("%s%s", table.Title, string(k)))
+				title := fmt.Sprintf("%s%s", table.Title, string(k))
+				table.SetTitle(title)
+				updateCursor(table, strings.TrimPrefix(title, searchPrefix))
 			}
 		}
 	}
-	table.SetCursor(3) // TODO Implement dynamic search for cursor and offset
 	u.Render()
 }
