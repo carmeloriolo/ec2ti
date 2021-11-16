@@ -40,7 +40,7 @@ func HandleSearch(u *Ui, e tcell.EventKey) {
 			u.searchMode = !u.searchMode
 		} else {
 			if len(table.Title) < 32 {
-				title := fmt.Sprintf("%s%s", table.Title, string(k))
+				title := fmt.Sprintf("%s%s", table.Title, string(e.Rune()))
 				table.SetTitle(title)
 				updateCursor(table, strings.TrimPrefix(title, searchPrefix))
 			}
@@ -54,7 +54,7 @@ func HandleSearch(u *Ui, e tcell.EventKey) {
 	default:
 		if isValidKey(fmt.Sprint(k)) {
 			if len(table.Title) < 32 {
-				title := fmt.Sprintf("%s%s", table.Title, string(k))
+				title := fmt.Sprintf("%s%s", table.Title, string(e.Rune()))
 				table.SetTitle(title)
 				updateCursor(table, strings.TrimPrefix(title, searchPrefix))
 			}
