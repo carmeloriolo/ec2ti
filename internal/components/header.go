@@ -30,7 +30,6 @@ func (u *InfoHeader) Rows() []string {
 	return []string{
 		fmt.Sprintf("UserId: %s", u.UserIdentity.UserId),
 		fmt.Sprintf("Account: %s", u.UserIdentity.Account),
-		fmt.Sprintf("Arn: %s", u.UserIdentity.Arn),
 		fmt.Sprintf("Region: %s", u.Region),
 	}
 }

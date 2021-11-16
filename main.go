@@ -17,8 +17,8 @@ import (
 const (
 	appName         = "Ec2Ti"
 	appDescription  = "The terminal user interface to connect to your AWS EC2 instances easily"
-	flagAwsRegion   = "region"
-	flagAwsEndpoint = "endpoint"
+	flagAwsRegion   = "AWS_DEFAULT_REGION"
+	flagAwsEndpoint = "AWS_EC2_CUSTOM_ENDPOINT"
 )
 
 var (
@@ -29,8 +29,9 @@ var (
 			EnvVars: []string{"AWS_EC2_CUSTOM_ENDPOINT"},
 		},
 		&cli.StringFlag{
-			Name:    flagAwsRegion,
-			EnvVars: []string{"AWS_DEFAULT_REGION"},
+			Name:     flagAwsRegion,
+			EnvVars:  []string{"AWS_DEFAULT_REGION"},
+			Required: true,
 		},
 	}
 )
