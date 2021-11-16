@@ -9,15 +9,15 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-type Handler func(*Ui, tcell.Key)
+type Handler func(*Ui, tcell.EventKey)
 type HandlerMap map[tcell.Key]Handler
 
-func HandleCtrlC(u *Ui, k tcell.Key) {
+func HandleCtrlC(u *Ui, e tcell.EventKey) {
 	u.Screen.Fini()
 	os.Exit(0)
 }
 
-func HandleDescribe(u *Ui, k tcell.Key) {
+func HandleDescribe(u *Ui, e tcell.EventKey) {
 	log.Println("TODO Describe Instance")
 	table := u.Table.(*components.InstanceTable)
 	it := u.Table.(*components.InstanceTable).Instances[table.Cursor+table.Offset] // it
@@ -26,7 +26,7 @@ func HandleDescribe(u *Ui, k tcell.Key) {
 	u.Render()
 }
 
-func HandleNavigateUp(u *Ui, k tcell.Key) {
+func HandleNavigateUp(u *Ui, e tcell.EventKey) {
 	table := u.Table.(*components.InstanceTable)
 	if table.Cursor > 0 {
 		table.Cursor--
@@ -36,7 +36,7 @@ func HandleNavigateUp(u *Ui, k tcell.Key) {
 	u.Render()
 }
 
-func HandleNavigateDown(u *Ui, k tcell.Key) {
+func HandleNavigateDown(u *Ui, e tcell.EventKey) {
 	table := u.Table.(*components.InstanceTable)
 	n := table.RowsDisplayed
 	if table.Cursor < n-1 && table.Cursor < len(table.Instances)-1 {

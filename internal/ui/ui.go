@@ -110,14 +110,14 @@ func (u *Ui) Run() error {
 			}
 			if !u.searchMode {
 				if f, present := u.Handlers[k]; present {
-					f(u, k)
+					f(u, *ev)
 				}
 			} else {
 				if k != tcell.KeyCtrlC {
-					(u.Handlers[KeySlash])(u, k)
+					(u.Handlers[KeySlash])(u, *ev)
 				} else {
 					if f, present := u.Handlers[k]; present {
-						f(u, k)
+						f(u, *ev)
 					}
 				}
 			}

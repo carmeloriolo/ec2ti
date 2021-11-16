@@ -22,8 +22,9 @@ func updateCursor(t *components.InstanceTable, s string) {
 	t.SetOffset(offset)
 }
 
-func HandleSearch(u *Ui, k tcell.Key) {
+func HandleSearch(u *Ui, e tcell.EventKey) {
 	table := u.Table.(*components.InstanceTable)
+	k := tcell.Key(e.Rune())
 	switch k {
 	case tcell.KeyEsc, tcell.KeyEnter:
 		if u.searchMode {

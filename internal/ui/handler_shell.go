@@ -11,7 +11,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-func HandleShell(u *Ui, k tcell.Key) {
+func HandleShell(u *Ui, k tcell.EventKey) {
 	table := u.Table.(*components.InstanceTable)
 	u.Screen.Clear()
 	err := u.Screen.Suspend()
