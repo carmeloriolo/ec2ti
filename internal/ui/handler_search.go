@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	searchIcon   = emoji.Sprintf(":detective:")
+	searchIcon   = emoji.Sprintf(":detective::")
 	searchPrefix = fmt.Sprintf("%s ", searchIcon)
 	isValidKey   = regexp.MustCompile(`^[a-zA-Z0-9 +-=._:/@]+$`).MatchString
 )
@@ -28,6 +28,9 @@ func HandleSearch(u *Ui, k tcell.Key) {
 	case tcell.KeyEsc, tcell.KeyEnter:
 		if u.searchMode {
 			table.SetTitle(table.DefaultTitle(len(table.Instances)))
+			if table.Cursor == -1 {
+				table.Cursor++
+			}
 			u.searchMode = !u.searchMode
 		}
 	case KeySlash:

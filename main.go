@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"sort"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -67,6 +68,9 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+			sort.Slice(instances, func(i, j int) bool {
+				return instances[i].Name < instances[j].Name
+			})
 			userIdentity, err := client.NewSts(cfg).GetCallerIdentity()
 			if err != nil {
 				log.Fatal(err)
@@ -75,7 +79,7 @@ func main() {
 				UserIdentity: *userIdentity,
 				Region:       c.String(flagAwsRegion),
 			})
-			u = u.SetTable(components.NewInstanceTable(instances, u.NumberOfRowsDisplayed()))
+			u = u.SetTable(components.NewInstanceTable(instances, len(instances)))
 			return u.SetHandlers(ui.DefaultHandlers).Run()
 		},
 	}

@@ -94,20 +94,28 @@ func (t *InstanceTable) GetPositionByInstanceName(s string) (int, int) {
 	rowsDisplayed := t.RowsDisplayed
 	resIndex := 0
 	s = strings.ToLower(s)
+	found := false
+
+	// TODO Evaluate the performance of the search by cycle on the list O(n)
+	// and if is it not performant evaluate a tree or trie to get a logarithmic time complexity
 	for i, v := range t.Instances {
 		if strings.HasPrefix(strings.ToLower(v.Name), s) {
 			resIndex = i
+			found = true
 			break
 		}
 	}
-	if resIndex < rowsDisplayed {
-		return resIndex, 0
+	if found {
+		if resIndex < rowsDisplayed {
+			return resIndex, 0
+		}
+		return (rowsDisplayed - 1), (resIndex - rowsDisplayed + 1)
 	}
-	return (rowsDisplayed - 1), (resIndex - rowsDisplayed + 1)
+	return -1, 0
 }
 
-func (table *InstanceTable) Render(screen tcell.Screen, startY int) {
-	columns := table.Columns()
+func (t *InstanceTable) Render(screen tcell.Screen, startY int) {
+	columns := t.Columns()
 	sw, sh := screen.Size()
 	n := len(columns)
 	delta := sw / n
@@ -120,13 +128,13 @@ func (table *InstanceTable) Render(screen tcell.Screen, startY int) {
 	}
 	w := 2
 	DrawTableBox(screen, 0, startY-1, sw-1, sh-2)
-	DrawStr(screen, sw/2-len(table.Title)/2-1, startY-1, tcell.StyleDefault, table.Title)
+	DrawStr(screen, sw/2-len(t.Title)/2-1, startY-1, tcell.StyleDefault, t.Title)
 
 	for _, v := range columns[0:n] {
 		DrawStr(screen, w, startY+1, styles[TopRow], v)
 		w += delta
 	}
-	tableInstances := table.Instances[table.Offset:len(table.Instances)]
+	tableInstances := t.Instances[t.Offset:len(t.Instances)]
 
 	for i, v := range tableInstances {
 		w = 2
@@ -134,7 +142,7 @@ func (table *InstanceTable) Render(screen tcell.Screen, startY int) {
 			return
 		}
 		targetStyle := styles[v.State]
-		if i == table.Cursor {
+		if i == t.Cursor {
 			targetStyle = styles[SelectedRow]
 		}
 		for c, str := range strings.Split(v.String(), " ") {
