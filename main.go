@@ -48,7 +48,7 @@ func main() {
 				config.WithEndpointResolver(
 					aws.EndpointResolverFunc(
 						func(service, region string) (aws.Endpoint, error) {
-							if flagAwsEndpoint != "" {
+							if c.String(flagAwsEndpoint) != "" {
 								return aws.Endpoint{
 									PartitionID:   "aws",
 									URL:           c.String(flagAwsEndpoint),
