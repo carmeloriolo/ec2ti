@@ -44,6 +44,7 @@ func (u *Ui) Render() {
 	u.Header.Render(u.Title, u.Screen, u.yTable)
 	s.Sync()
 }
+
 func (u *Ui) GetScreen() tcell.Screen {
 	return u.Screen
 }
@@ -95,24 +96,6 @@ func (u *Ui) SetHandlers(h HandlerMap) *Ui {
 	return u
 }
 
-func NewUi() *Ui {
-	encoding.Register()
-	s, err := tcell.NewScreen()
-	if err != nil {
-		log.Fatal(err)
-	}
-	if err := s.Init(); err != nil {
-		log.Fatal(err)
-	}
-	_, sh := s.Size()
-	return &Ui{
-		Title:      defaultTitle,
-		searchMode: false,
-		Screen:     s,
-		yTable:     sh / componentsRatio,
-	}
-}
-
 func (u *Ui) Run() error {
 	for {
 		switch ev := u.Screen.PollEvent().(type) {
@@ -147,4 +130,22 @@ func (u *Ui) Run() error {
 func (u *Ui) NumberOfRowsDisplayed() int {
 	_, sh := u.Screen.Size()
 	return sh - u.yTable - 5
+}
+
+func NewUi() *Ui {
+	encoding.Register()
+	s, err := tcell.NewScreen()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := s.Init(); err != nil {
+		log.Fatal(err)
+	}
+	_, sh := s.Size()
+	return &Ui{
+		Title:      defaultTitle,
+		searchMode: false,
+		Screen:     s,
+		yTable:     sh / componentsRatio,
+	}
 }
