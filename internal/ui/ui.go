@@ -48,7 +48,7 @@ func (u *Ui) Render() {
 	_, sh := u.Screen.Size()
 	u.yTable = sh / componentsRatio
 	u.Table.OnTableResize(u.NumberOfRowsDisplayed())
-	s.Clear()
+	// s.Clear()
 	u.Table.Render(u.Screen, u.yTable)
 	u.Header.Render(u.Title, u.Screen, u.yTable)
 	s.Sync()

@@ -11,9 +11,11 @@ type Handler func(*Ui, tcell.EventKey)
 type HandlerMap map[tcell.Key]Handler
 
 func HandleEsc(u *Ui, e tcell.EventKey) {
-	u.ViewMode = ViewModeNormal
-	u.Screen.Clear()
-	u.Render()
+	if u.ViewMode != ViewModeNormal {
+		u.ViewMode = ViewModeNormal
+		u.Screen.Clear()
+		u.Render()
+	}
 }
 
 func HandleCtrlC(u *Ui, e tcell.EventKey) {
