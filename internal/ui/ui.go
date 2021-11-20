@@ -9,6 +9,14 @@ import (
 	"github.com/gdamore/tcell/v2/encoding"
 )
 
+type ViewModeType int
+
+const (
+	ViewModeNormal   ViewModeType = 0
+	ViewModeSearch   ViewModeType = 1
+	ViewModeDescribe ViewModeType = 2
+)
+
 var (
 	componentsRatio = 4
 	defaultTitle    = "Title goes here"
@@ -16,6 +24,7 @@ var (
 		tcell.KeyCtrlC: HandleCtrlC,
 		tcell.KeyUp:    HandleNavigateUp,
 		tcell.KeyDown:  HandleNavigateDown,
+		KeyEsc:         HandleEsc,
 		KeyK:           HandleNavigateUp,
 		KeyJ:           HandleNavigateDown,
 		KeyD:           HandleDescribe,
@@ -25,13 +34,13 @@ var (
 )
 
 type Ui struct {
-	Title      string
-	Header     components.Header
-	Table      components.Table
-	Handlers   HandlerMap
-	Screen     tcell.Screen
-	yTable     int
-	searchMode bool
+	Title    string
+	Header   components.Header
+	Table    components.Table
+	Handlers HandlerMap
+	Screen   tcell.Screen
+	yTable   int
+	ViewMode ViewModeType
 }
 
 func (u *Ui) Render() {
@@ -108,18 +117,24 @@ func (u *Ui) Run() error {
 			if ev.Rune() != 0 {
 				k = tcell.Key(ev.Rune())
 			}
-			if !u.searchMode {
-				if f, present := u.Handlers[k]; present {
-					f(u, *ev)
+			// Search Mode
+			if u.ViewMode == ViewModeSearch {
+				if k == tcell.KeyCtrlC {
+					(u.Handlers[tcell.KeyCtrlC])(u, *ev) // the program will exit
+					continue
 				}
-			} else {
-				if k != tcell.KeyCtrlC {
-					(u.Handlers[KeySlash])(u, *ev)
-				} else {
-					if f, present := u.Handlers[k]; present {
-						f(u, *ev)
-					}
+				(u.Handlers[KeySlash])(u, *ev)
+				continue
+			}
+			// Describe Mode
+			if u.ViewMode == ViewModeDescribe {
+				if k == KeyEsc {
+					(u.Handlers[KeyEsc])(u, *ev)
 				}
+			}
+			// Normal Mode
+			if f, present := u.Handlers[k]; present {
+				f(u, *ev)
 			}
 		default:
 			return errors.New("unexpected input")
@@ -143,9 +158,9 @@ func NewUi() *Ui {
 	}
 	_, sh := s.Size()
 	return &Ui{
-		Title:      defaultTitle,
-		searchMode: false,
-		Screen:     s,
-		yTable:     sh / componentsRatio,
+		Title:    defaultTitle,
+		ViewMode: ViewModeNormal,
+		Screen:   s,
+		yTable:   sh / componentsRatio,
 	}
 }

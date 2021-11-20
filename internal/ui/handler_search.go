@@ -24,20 +24,23 @@ func updateCursor(t *components.InstanceTable, s string) {
 
 func HandleSearch(u *Ui, e tcell.EventKey) {
 	table := u.Table.(*components.InstanceTable)
-	k := tcell.Key(e.Rune())
+	k := e.Key()
+	if e.Rune() != 0 {
+		k = tcell.Key(e.Rune())
+	}
 	switch k {
-	case tcell.KeyEsc, tcell.KeyEnter:
-		if u.searchMode {
+	case KeyEsc, tcell.KeyEnter:
+		if u.ViewMode == ViewModeSearch {
 			table.SetTitle(table.DefaultTitle(len(table.Instances)))
 			if table.Cursor == -1 {
 				table.Cursor++
 			}
-			u.searchMode = !u.searchMode
+			u.ViewMode = ViewModeNormal
 		}
 	case KeySlash:
-		if !u.searchMode {
+		if u.ViewMode == ViewModeNormal {
 			table.SetTitle(searchPrefix)
-			u.searchMode = !u.searchMode
+			u.ViewMode = ViewModeSearch
 		} else {
 			if len(table.Title) < 32 {
 				title := fmt.Sprintf("%s%s", table.Title, string(e.Rune()))

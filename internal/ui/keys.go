@@ -1,6 +1,7 @@
 package ui
 
 const (
+	KeyEsc       = 27
 	KeySlash     = 47
 	KeyD         = 100
 	KeyS         = 115

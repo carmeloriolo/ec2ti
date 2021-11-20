@@ -27,11 +27,25 @@ func DrawHeaderBox(s tcell.Screen, x, y, w, h int) {
 	for i := x; i < w; i++ {
 		s.SetContent(i, y, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
 	}
+	DrawBorders(s, x, y, w, h)
+}
+
+func DrawTableBox(s tcell.Screen, x, y, w, h int) {
+	DrawBox(s, x, y, w, h)
+}
+
+func DrawLine(s tcell.Screen, x, y, l int) {
+	for i := x; i < l; i++ {
+		s.SetContent(i, y, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
+	}
+}
+
+func DrawBorders(s tcell.Screen, x, y, w, h int) {
 	for i := y; i < h; i++ {
 		if i == y {
 			s.SetContent(x, i, tcell.RuneULCorner, []rune{}, tcell.StyleDefault)
 			s.SetContent(w, i, tcell.RuneURCorner, []rune{}, tcell.StyleDefault)
-		} else if i == h {
+		} else if i == h-1 {
 			s.SetContent(x, i, tcell.RuneLLCorner, []rune{}, tcell.StyleDefault)
 			s.SetContent(w, i, tcell.RuneLRCorner, []rune{}, tcell.StyleDefault)
 		} else {
@@ -41,7 +55,7 @@ func DrawHeaderBox(s tcell.Screen, x, y, w, h int) {
 	}
 }
 
-func DrawTableBox(s tcell.Screen, x, y, w, h int) {
+func DrawBox(s tcell.Screen, x, y, w, h int) {
 	for i := x; i < w; i++ {
 		s.SetContent(i, y, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
 		s.SetContent(i, h-1, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
@@ -57,11 +71,5 @@ func DrawTableBox(s tcell.Screen, x, y, w, h int) {
 			s.SetContent(x, i, tcell.RuneVLine, []rune{}, tcell.StyleDefault)
 			s.SetContent(w, i, tcell.RuneVLine, []rune{}, tcell.StyleDefault)
 		}
-	}
-}
-
-func DrawLine(s tcell.Screen, x, y, l int) {
-	for i := x; i < l; i++ {
-		s.SetContent(i, y, tcell.RuneHLine, []rune{}, tcell.StyleDefault)
 	}
 }

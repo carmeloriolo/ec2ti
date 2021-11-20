@@ -1,9 +1,7 @@
 package ui
 
 import (
-	"log"
 	"os"
-	"time"
 
 	"github.com/carmeloriolo/ec2ti/internal/components"
 	"github.com/gdamore/tcell/v2"
@@ -12,18 +10,25 @@ import (
 type Handler func(*Ui, tcell.EventKey)
 type HandlerMap map[tcell.Key]Handler
 
+func HandleEsc(u *Ui, e tcell.EventKey) {
+	u.ViewMode = ViewModeNormal
+	u.Screen.Clear()
+	u.Render()
+}
+
 func HandleCtrlC(u *Ui, e tcell.EventKey) {
 	u.Screen.Fini()
 	os.Exit(0)
 }
 
 func HandleDescribe(u *Ui, e tcell.EventKey) {
-	log.Println("TODO Describe Instance")
-	table := u.Table.(*components.InstanceTable)
-	it := u.Table.(*components.InstanceTable).Instances[table.Cursor+table.Offset] // it
-	log.Println(it)
-	time.Sleep(time.Second * 2) // Give user some seconds to read the error
-	u.Render()
+	// table := u.Table.(*components.InstanceTable)
+	// it := u.Table.(*components.InstanceTable).Instances[table.Cursor+table.Offset] // it
+	u.ViewMode = ViewModeDescribe
+	u.Screen.Clear()
+	x, y := u.Screen.Size()
+	components.DrawBox(u.Screen, 0, 0, x-1, y-2)
+	u.Screen.Sync()
 }
 
 func HandleNavigateUp(u *Ui, e tcell.EventKey) {
